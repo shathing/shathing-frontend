@@ -8,7 +8,7 @@ import { NextIntlClientProvider } from "next-intl";
 
 export default function GlobalNotFound() {
   return (
-    <html>
+    <html lang="en">
       <body>
         <NextIntlClientProvider>
           <ThemeProvider>
