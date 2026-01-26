@@ -1,0 +1,15 @@
+{
+  "Common": {
+    "service-name": "르폰트-템플릿"
+  },
+  "NotFound": {
+    "title": "페이지를 찾을 수 없음",
+    "description": "찾으시는 페이지가\n없는 듯하네요.",
+    "go-to-home": "홈으로 이동",
+    "or-see-our-site-map": "사이트 맵을 확인해보는 건 어떨까요?"
+  },
+  "Sitemap": {
+    "title": "사이트 맵",
+    "home": "홈"
+  }
+}

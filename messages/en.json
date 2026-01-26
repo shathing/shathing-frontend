@@ -1,0 +1,15 @@
+{
+  "Common": {
+    "service-name": "frontend-template"
+  },
+  "NotFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking\nfor does not exist.",
+    "go-to-home": "Go to home",
+    "or-see-our-site-map": "Or see our site map"
+  },
+  "Sitemap": {
+    "title": "Site Map",
+    "home": "Home"
+  }
+}

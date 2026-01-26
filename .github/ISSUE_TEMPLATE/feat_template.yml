@@ -1,0 +1,17 @@
+name: "feat"
+description: "기능 추가"
+labels: "enhancement"
+title: "feat: "
+body:
+  - type: textarea
+    attributes:
+      label: 개요
+      placeholder: 개요를 입력하세요.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 상세
+      placeholder: "- 상세를 입력하세요."
+    validations:
+      required: true
