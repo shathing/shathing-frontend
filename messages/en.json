@@ -2,6 +2,10 @@
   "Common": {
     "service-name": "shathing"
   },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, en {English} ko {한국어} other {Unknown}}"
+  },
   "NotFound": {
     "title": "Page Not Found",
     "description": "The page you are looking\nfor does not exist.",

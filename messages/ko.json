@@ -2,6 +2,10 @@
   "Common": {
     "service-name": "샤딩"
   },
+  "LocaleSwitcher": {
+    "label": "언어 변경",
+    "locale": "{locale, select, en {English} ko {한국어} other {Unknown}}"
+  },
   "NotFound": {
     "title": "페이지를 찾을 수 없음",
     "description": "찾으시는 페이지가\n없는 듯하네요.",
