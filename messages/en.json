@@ -15,5 +15,20 @@
   "Sitemap": {
     "title": "Site Map",
     "home": "Home"
+  },
+  "Signin": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "find-password": "Find password",
+    "login-with-google": "Login with Google",
+    "signup": "Sign up",
+    "signup-message": "Don't have an account?",
+    "invalid-email": "Invalid email address",
+    "input-password": "Input password",
+    "fail-to-signin": "Fail to signin",
+    "error-to-signin": "Error to signin",
+    "try-again-later": "Please try again later.",
+    "incorrect-email-password": "The email or password you entered is incorrect."
   }
 }

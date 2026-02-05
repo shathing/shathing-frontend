@@ -15,5 +15,20 @@
   "Sitemap": {
     "title": "사이트 맵",
     "home": "홈"
+  },
+  "Signin": {
+    "title": "로그인",
+    "email": "이메일",
+    "password": "비밀번호",
+    "find-password": "비밀번호 찾기",
+    "login-with-google": "구글 계정으로 로그인",
+    "signup": "회원가입",
+    "signup-message": "계정이 없으신가요?",
+    "invalid-email": "올바른 이메일 형식이 아님",
+    "input-password": "비밀번호를 입력해 주세요",
+    "fail-to-signin": "로그인 실패",
+    "error-to-signin": "로그인 오류",
+    "try-again-later": "잠시후 다시 시도해 주십시오.",
+    "incorrect-email-password": "이메일 및 비밀번호를 잘못 입력하였습니다."
   }
 }
