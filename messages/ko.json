@@ -16,19 +16,13 @@
     "title": "사이트 맵",
     "home": "홈"
   },
-  "Signin": {
-    "title": "로그인",
+  "Auth": {
+    "title": "로그인 및 회원가입",
     "email": "이메일",
-    "password": "비밀번호",
-    "find-password": "비밀번호 찾기",
-    "login-with-google": "구글 계정으로 로그인",
-    "signup": "회원가입",
-    "signup-message": "계정이 없으신가요?",
+    "placeholder": "이메일을 입력하세요",
+    "continue-email": "이메일로 계속하기",
+    "continue-google": "구글로 계속하기",
     "invalid-email": "올바른 이메일 형식이 아님",
-    "input-password": "비밀번호를 입력해 주세요",
-    "fail-to-signin": "로그인 실패",
-    "error-to-signin": "로그인 오류",
-    "try-again-later": "잠시후 다시 시도해 주십시오.",
-    "incorrect-email-password": "이메일 및 비밀번호를 잘못 입력하였습니다."
+    "success-send-email": "로그인 또는 회원가입 링크가 이메일로 전송되었습니다."
   }
 }

@@ -16,19 +16,13 @@
     "title": "Site Map",
     "home": "Home"
   },
-  "Signin": {
-    "title": "Login",
+  "Auth": {
+    "title": "Login or Sign up",
     "email": "Email",
-    "password": "Password",
-    "find-password": "Find password",
-    "login-with-google": "Login with Google",
-    "signup": "Sign up",
-    "signup-message": "Don't have an account?",
+    "placeholder": "Enter your email",
+    "continue-email": "Continue with email",
+    "continue-google": "Continue with Google",
     "invalid-email": "Invalid email address",
-    "input-password": "Input password",
-    "fail-to-signin": "Fail to signin",
-    "error-to-signin": "Error to signin",
-    "try-again-later": "Please try again later.",
-    "incorrect-email-password": "The email or password you entered is incorrect."
+    "success-send-email": "A login or sign-up link has been sent to your email."
   }
 }
