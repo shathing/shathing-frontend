@@ -2,6 +2,7 @@
 
 import { authApi } from "@/apis/auth";
 import { Button } from "@/components/ui/button";
+import { CardDescription } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,11 +32,11 @@ export function AuthForm() {
 
   const { mutate: sendAuthEmail } = useMutation({
     mutationFn: (data: SignInFormValues) => authApi.sendAuthEmail(data),
-    onMutate: () => {
-      setSent(true);
-      toast.success(t("success-send-email"));
+    onMutate: () => setSent(true),
+    onError: () => {
+      setSent(false);
+      toast.warning(t("fail-send-email"));
     },
-    onError: () => setSent(false),
   });
 
   const handleSubmit = (data: SignInFormValues) => sendAuthEmail(data);
@@ -43,26 +44,33 @@ export function AuthForm() {
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)}>
       <FieldGroup>
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field>
-              <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
-              <Input
-                aria-invalid={fieldState.invalid}
-                id="email"
-                type="email"
-                placeholder={t("placeholder")}
-                disabled={sent}
-                {...field}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
         <Field>
-          <Button disabled={sent}>{t("continue-email")}</Button>
+          {sent ? (
+            <CardDescription>{t("success-send-email")}</CardDescription>
+          ) : (
+            <>
+              <Controller
+                name="email"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
+                    <Input
+                      aria-invalid={fieldState.invalid}
+                      id="email"
+                      type="email"
+                      placeholder={t("placeholder")}
+                      {...field}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+              <Button>{t("continue-email")}</Button>
+            </>
+          )}
+        </Field>
+        <Field>
           {/* TODO: 구글 OAuth */}
           <Button variant="outline" type="button">
             {t("continue-google")}

@@ -23,6 +23,7 @@
     "continue-email": "Continue with email",
     "continue-google": "Continue with Google",
     "invalid-email": "Invalid email address",
-    "success-send-email": "A login or sign-up link has been sent to your email."
+    "success-send-email": "A login or sign-up link has been sent to your email.",
+    "fail-send-email": "There was a problem sending the email. Please try again in a moment."
   }
 }
