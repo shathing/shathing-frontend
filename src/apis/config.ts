@@ -1,16 +1,109 @@
-import { ACCESS_TOKEN } from "@/constants/auth";
-import axios from "axios";
+import { ACCESS_TOKEN, GET_NEW_ACCESS_TOKEN_API_PATH } from "@/constants/auth";
+import { VerifyTokenResponse } from "@/types/apis/auth";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { toast } from "sonner";
+
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+const AUTH_REDIRECT_PATH = "/auth";
+const EXCLUDED_GLOBAL_ERROR_STATUSES = [400, 404];
 
 const httpClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
+const isBrowser = () => typeof window !== "undefined";
+
+const isRefreshRequest = (request: RetryableRequestConfig | undefined) =>
+  request?.url?.includes(GET_NEW_ACCESS_TOKEN_API_PATH) ?? false;
+
+const shouldRetryWithRefresh = (error: AxiosError, request: RetryableRequestConfig | undefined) =>
+  error.response?.status === 401 && !isRefreshRequest(request) && !request?._retry;
+
+const setAuthorizationHeader = (request: RetryableRequestConfig, accessToken: string) => {
+  request.headers = request.headers ?? {};
+  request.headers.Authorization = `Bearer ${accessToken}`;
+};
+
+const handleRefreshFailure = (refreshError: unknown) => {
+  if (isBrowser()) {
+    localStorage.removeItem(ACCESS_TOKEN);
+    window.location.href = AUTH_REDIRECT_PATH;
+  }
+  return Promise.reject(refreshError);
+};
+
+const requestNewAccessToken = async () => {
+  const { data } = await httpClient.post<VerifyTokenResponse>(GET_NEW_ACCESS_TOKEN_API_PATH, null, {
+    withCredentials: true,
+  });
+  return data.accessToken;
+};
+
 httpClient.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem(ACCESS_TOKEN)
+  const accessToken = isBrowser() ? localStorage.getItem(ACCESS_TOKEN) : null;
   if (accessToken) {
+    config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
-})
+});
 
-export default httpClient
+httpClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryableRequestConfig | undefined;
+
+    if (!shouldRetryWithRefresh(error, originalRequest)) {
+      showToastWhenGlobalHandledStatusCode(error);
+      return Promise.reject(error);
+    }
+
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    try {
+      originalRequest._retry = true;
+      const accessToken = await requestNewAccessToken();
+      if (isBrowser()) {
+        localStorage.setItem(ACCESS_TOKEN, accessToken);
+      }
+      setAuthorizationHeader(originalRequest, accessToken);
+      return httpClient(originalRequest);
+    } catch (refreshError) {
+      return handleRefreshFailure(refreshError);
+    }
+  },
+);
+
+const showToastWhenGlobalHandledStatusCode = (error: AxiosError) => {
+  if (isGlobalHandledStatusCode(error)) {
+    const showToast = error.response?.status !== 401;
+    if (showToast) {
+      const errorMessage = parseAxiosErrorMessage(error);
+      toast.error(errorMessage);
+    }
+  }
+};
+
+type ApiErrorResponse = {
+  message?: string | { message?: string };
+};
+
+export const parseAxiosErrorMessage = (error: AxiosError) => {
+  const response = error.response?.data as ApiErrorResponse | undefined;
+  const nestedMessage = typeof response?.message === "object" ? response.message.message : undefined;
+  const message = typeof response?.message === "string" ? response.message : nestedMessage;
+  return message || "A temporary error has occurred.";
+};
+
+// Backward compatibility for previous misspelled export name.
+export const parseAsioxErrorMessage = parseAxiosErrorMessage;
+
+export const isGlobalHandledStatusCode = (error: AxiosError) =>
+  !EXCLUDED_GLOBAL_ERROR_STATUSES.includes(error.response?.status ?? -1);
+
+export default httpClient;
