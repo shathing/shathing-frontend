@@ -24,6 +24,9 @@
     "continue-google": "Continue with Google",
     "invalid-email": "Invalid email address",
     "success-send-email": "A login or sign-up link has been sent to your email.",
-    "fail-send-email": "There was a problem sending the email. Please try again in a moment."
+    "fail-send-email": "There was a problem sending the email. Please try again in a moment.",
+    "verifying": "Verifying your sign-in...",
+    "success-verify-token": "You are now signed in.",
+    "fail-verify-token": "This authentication link is invalid or has expired."
   }
 }
