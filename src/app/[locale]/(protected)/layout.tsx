@@ -5,8 +5,7 @@ import { ReactNode } from "react";
 
 export default async function Layout({ children }: { children: ReactNode }) {
   const cookieStore = await cookies();
-  const refreshToken = cookieStore.get(REFRESH_TOKEN)?.value;
-  if (!refreshToken) redirect("/auth");
+  if (!cookieStore.has(REFRESH_TOKEN)) redirect("/auth");
 
   return children;
 }
