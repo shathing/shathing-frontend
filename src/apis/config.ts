@@ -1,5 +1,3 @@
-import { ACCESS_TOKEN, GET_NEW_ACCESS_TOKEN_API_PATH } from "@/constants/auth";
-import { VerifyTokenResponse } from "@/types/apis/auth";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
 
@@ -7,11 +5,13 @@ interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
+const GET_NEW_ACCESS_TOKEN_API_PATH = "/auth/refresh"
 const AUTH_REDIRECT_PATH = "/auth";
 const EXCLUDED_GLOBAL_ERROR_STATUSES = [400, 404];
 
 const httpClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
 });
 
 const isBrowser = () => typeof window !== "undefined";
@@ -22,34 +22,12 @@ const isRefreshRequest = (request: RetryableRequestConfig | undefined) =>
 const shouldRetryWithRefresh = (error: AxiosError, request: RetryableRequestConfig | undefined) =>
   error.response?.status === 401 && !isRefreshRequest(request) && !request?._retry;
 
-const setAuthorizationHeader = (request: RetryableRequestConfig, accessToken: string) => {
-  request.headers = request.headers ?? {};
-  request.headers.Authorization = `Bearer ${accessToken}`;
-};
-
 const handleRefreshFailure = (refreshError: unknown) => {
   if (isBrowser()) {
-    localStorage.removeItem(ACCESS_TOKEN);
     window.location.href = AUTH_REDIRECT_PATH;
   }
   return Promise.reject(refreshError);
 };
-
-const requestNewAccessToken = async () => {
-  const { data } = await httpClient.post<VerifyTokenResponse>(GET_NEW_ACCESS_TOKEN_API_PATH, null, {
-    withCredentials: true,
-  });
-  return data.accessToken;
-};
-
-httpClient.interceptors.request.use((config) => {
-  const accessToken = isBrowser() ? localStorage.getItem(ACCESS_TOKEN) : null;
-  if (accessToken) {
-    config.headers = config.headers ?? {};
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
 
 httpClient.interceptors.response.use(
   (response) => response,
@@ -67,11 +45,7 @@ httpClient.interceptors.response.use(
 
     try {
       originalRequest._retry = true;
-      const accessToken = await requestNewAccessToken();
-      if (isBrowser()) {
-        localStorage.setItem(ACCESS_TOKEN, accessToken);
-      }
-      setAuthorizationHeader(originalRequest, accessToken);
+      await httpClient.post(GET_NEW_ACCESS_TOKEN_API_PATH);
       return httpClient(originalRequest);
     } catch (refreshError) {
       return handleRefreshFailure(refreshError);

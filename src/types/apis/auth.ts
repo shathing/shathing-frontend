@@ -5,7 +5,3 @@ export interface SendAuthEmailRequest {
 export interface VerifyTokenRequest {
   token: string
 }
-
-export interface VerifyTokenResponse {
-  accessToken: string
-}
