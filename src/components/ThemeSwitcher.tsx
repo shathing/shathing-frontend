@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { ButtonGroup } from "./ui/button-group";
 import { Button } from "./ui/button";
 
-export function ThemeSwitcher() {
+export default function ThemeSwitcher() {
   const isClient = useIsClient();
   const { theme: currentTheme, themes, setTheme } = useTheme();
 
