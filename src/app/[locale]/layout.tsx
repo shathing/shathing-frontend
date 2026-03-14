@@ -1,10 +1,8 @@
-import { Locale, NextIntlClientProvider, hasLocale } from "next-intl";
+import { Locale, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import ReactQueryProvider from "@/providers/ReactQueryProvider";
-import { Toaster } from "@/components/ui/sonner";
+import Providers from "@/providers";
 
 export async function generateMetadata(props: Omit<LayoutProps<"/[locale]">, "children">) {
   const { locale } = await props.params;
@@ -36,14 +34,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <ReactQueryProvider>
-          <NextIntlClientProvider>
-            <ThemeProvider>
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </NextIntlClientProvider>
-        </ReactQueryProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

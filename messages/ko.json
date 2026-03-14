@@ -2,6 +2,10 @@
   "Common": {
     "service-name": "샤딩"
   },
+  "Header": {
+    "login": "로그인",
+    "sitemap": "사이트맵"
+  },
   "LocaleSwitcher": {
     "label": "언어 변경",
     "locale": "{locale, select, en {English} ko {한국어} other {Unknown}}"

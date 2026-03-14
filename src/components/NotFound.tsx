@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Link } from "@/i18n/navigation";
-import DefaultLayout from "@/components/layout";
+import DefaultLayout from "@/app/[locale]/(with-layout)/layout";
 
 export default function NotFound() {
   const t = useTranslations("NotFound");

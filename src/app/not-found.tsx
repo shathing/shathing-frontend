@@ -1,6 +1,5 @@
 import NotFound from "@/components/NotFound";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import { NextIntlClientProvider } from "next-intl";
+import Providers from "@/providers";
 
 // This page renders when a route like `/unknown.txt` is requested.
 // In this case, the layout at `app/[locale]/layout.tsx` receives
@@ -10,11 +9,9 @@ export default function GlobalNotFound() {
   return (
     <html lang="en">
       <body>
-        <NextIntlClientProvider>
-          <ThemeProvider>
-            <NotFound />
-          </ThemeProvider>
-        </NextIntlClientProvider>
+        <Providers>
+          <NotFound />
+        </Providers>
       </body>
     </html>
   );

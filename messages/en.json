@@ -2,6 +2,10 @@
   "Common": {
     "service-name": "shathing"
   },
+  "Header": {
+    "login": "login",
+    "sitemap": "sitemap"
+  },
   "LocaleSwitcher": {
     "label": "Change language",
     "locale": "{locale, select, en {English} ko {한국어} other {Unknown}}"

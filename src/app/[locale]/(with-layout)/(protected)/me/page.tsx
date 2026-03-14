@@ -1,16 +1,12 @@
 "use client";
 
-import { authApi } from "@/apis/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { useQuery } from "@tanstack/react-query";
+import useGetMe from "@/hooks/apis/useGetMe";
 
 export default function Page() {
-  const { data, isPending } = useQuery({
-    queryKey: ["authApi.me"],
-    queryFn: () => authApi.me().then(({ data }) => data),
-  });
+  const { data, isPending } = useGetMe();
 
   const email = data?.email ?? "-";
   const username = data?.username ?? "-";
