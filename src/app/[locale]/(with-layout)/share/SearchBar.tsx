@@ -1,18 +1,14 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import LegalDong from "./LegalDong";
 
 const categories = [
   "디지털기기",
@@ -36,62 +32,11 @@ const categories = [
   "빌려주세요",
 ];
 
-const depth1 = [
-  { code: "11", name: "서울특별시" },
-  { code: "47", name: "경상북도" },
-];
-
-const depth2 = [
-  {
-    code: "12",
-    name: "동작구",
-  },
-];
-
-const depth3 = [
-  {
-    code: "123",
-    name: "사당동",
-  },
-];
-
 export default function SearchBar() {
   return (
     <Card className="sticky top-2.5 bg-background/50 backdrop-blur-xs py-3">
       <CardContent className="flex gap-1 px-3">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">위치</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuGroup>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>서울특별시</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>동작구</DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>사당동</DropdownMenuItem>
-                      <DropdownMenuItem>상도동</DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>경상북도</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>영천시</DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>문내동</DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
+        <LegalDong />
         <DropdownMenu>
           <DropdownMenuTrigger asChild defaultValue="디지털기기">
             <Button variant="outline">카테고리</Button>
