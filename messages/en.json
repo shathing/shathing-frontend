@@ -4,7 +4,7 @@
   },
   "Header": {
     "login": "login",
-    "sitemap": "sitemap"
+    "share": "share"
   },
   "LocaleSwitcher": {
     "label": "Change language",
@@ -32,5 +32,8 @@
     "verifying": "Verifying your sign-in...",
     "success-verify-token": "You are now signed in.",
     "fail-verify-token": "This authentication link is invalid or has expired."
+  },
+  "Share": {
+    "title": "Share"
   }
 }

@@ -18,7 +18,7 @@ export default async function Header() {
         </Link>
         <nav>
           <ul className="flex gap-5">
-            {[{ href: "/sitemap", title: t("sitemap") }].map(({ href, title }, idx) => (
+            {[{ href: "/share", title: t("share") }].map(({ href, title }, idx) => (
               <li key={idx}>
                 <Button asChild variant="ghost">
                   <Link href={href}>{title}</Link>

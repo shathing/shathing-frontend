@@ -4,7 +4,7 @@
   },
   "Header": {
     "login": "로그인",
-    "sitemap": "사이트맵"
+    "share": "공유"
   },
   "LocaleSwitcher": {
     "label": "언어 변경",
@@ -32,5 +32,8 @@
     "verifying": "로그인 정보를 확인 중입니다...",
     "success-verify-token": "로그인에 성공했습니다.",
     "fail-verify-token": "인증 링크가 유효하지 않거나 만료되었습니다."
+  },
+  "Share": {
+    "title": "공유"
   }
 }

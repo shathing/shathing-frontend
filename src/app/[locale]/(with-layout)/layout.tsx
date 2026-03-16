@@ -6,7 +6,7 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Header />
-      <main className="w-full flex justify-center bg-blue-300">
+      <main className="w-full flex justify-center">
         <div className="w-full max-w-5xl px-4">{children}</div>
       </main>
       <Footer />
