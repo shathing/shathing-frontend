@@ -14,6 +14,8 @@ const httpClient = axios.create({
   withCredentials: true,
 });
 
+export const s3Client = axios.create()
+
 const isBrowser = () => typeof window !== "undefined";
 
 const isRefreshRequest = (request: RetryableRequestConfig | undefined) =>

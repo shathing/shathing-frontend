@@ -1,6 +1,7 @@
 "use client";
 
 import { shareApi } from "@/apis/share";
+import { fileApi } from "@/apis/file";
 import Category from "../../../share/Category";
 import LegalDong from "../../../share/LegalDong";
 import { Button } from "@/components/ui/button";
@@ -70,12 +71,22 @@ export default function Page() {
   }, [selectedCategory, form]);
 
   const handleSubmit = async (values: PostFormValues) => {
-    console.log(values.photoUrls);
     try {
+      const photoUrls = await Promise.all(
+        values.photoUrls.map(async (file) => {
+          const { data } = await fileApi.getUploadPresignedUrl({
+            fileName: file.name,
+            contentType: file.type || "application/octet-stream",
+          });
+          await fileApi.uploadWithPresignedUrl(data.uploadUrl, file);
+          return data.key;
+        }),
+      );
+
       await shareApi.post({
         title: values.title,
         content: values.content,
-        photoUrls: [], // TODO: photoUrls S3 버킷에 올리고 URL 넣기
+        photoUrls,
         legalDongCode: values.locationCode,
         categoryId: Number(values.categoryId),
       });
