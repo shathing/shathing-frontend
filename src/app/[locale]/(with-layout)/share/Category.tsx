@@ -11,14 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
-import type { Category } from "@/types/models/category";
+import { useShareSelectionStore } from "@/stores/share-selection";
 import { useQuery } from "@tanstack/react-query";
 import { RotateCcw } from "lucide-react";
 import { useState } from "react";
 
 export default function Category() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selected, setSelected] = useState<Category | null>(null);
+  const selected = useShareSelectionStore((state) => state.selectedCategory);
+  const setSelectedCategory = useShareSelectionStore((state) => state.setSelectedCategory);
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["categoryApi.getList"],
     queryFn: () => categoryApi.getList().then(({ data }) => data),
@@ -31,13 +32,13 @@ export default function Category() {
   const handleValueChange = (value: string) => {
     const picked = categories.find((category) => category.id.toString() === value);
     if (picked) {
-      setSelected(picked);
+      setSelectedCategory(picked);
     }
   };
 
   return (
     <DropdownMenu onOpenChange={setMenuOpen}>
-      <DropdownMenuTrigger asChild defaultValue="디지털기기">
+      <DropdownMenuTrigger asChild>
         <Button variant="outline">{selected?.name ?? "카테고리"}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

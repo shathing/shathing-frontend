@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
 import useGetLegalDongs from "@/hooks/apis/useGetLegalDongs";
+import { useShareSelectionStore } from "@/stores/share-selection";
 import type { LegalDong } from "@/types/models/legal-dong";
 import { RotateCcw } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -21,7 +22,7 @@ const MAX_SUB_DEPTH = 2;
 
 export default function LegalDong() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selected, setSelected] = useState<LegalDong | null>(null);
+  const selected = useShareSelectionStore((state) => state.selectedLegalDong);
   const { data, isPending, isError, refetch } = useGetLegalDongs({ enabled: menuOpen });
   const legalDongs = data ?? [];
 
@@ -40,7 +41,7 @@ export default function LegalDong() {
             onRetry={() => refetch()}
           >
             {legalDongs.map((dong) => (
-              <LegalDongSubMenu depth={1} key={dong.code} parent={dong} onSelect={setSelected} />
+              <LegalDongSubMenu depth={1} key={dong.code} parent={dong} />
             ))}
           </MenuFetchState>
         </DropdownMenuGroup>
@@ -49,15 +50,8 @@ export default function LegalDong() {
   );
 }
 
-function LegalDongSubMenu({
-  parent,
-  depth,
-  onSelect,
-}: {
-  parent: LegalDong;
-  depth: number;
-  onSelect: (dong: LegalDong) => void;
-}) {
+function LegalDongSubMenu({ parent, depth }: { parent: LegalDong; depth: number }) {
+  const setSelectedLegalDong = useShareSelectionStore((state) => state.setSelectedLegalDong);
   const [open, setOpen] = useState(false);
   const { data, isPending, isError, refetch } = useGetLegalDongs({
     code: parent.code,
@@ -79,13 +73,11 @@ function LegalDongSubMenu({
         >
           {isLeafDepth
             ? children.map((child) => (
-                <DropdownMenuItem key={child.code} onSelect={() => onSelect(child)}>
+                <DropdownMenuItem key={child.code} onSelect={() => setSelectedLegalDong(child)}>
                   {child.name}
                 </DropdownMenuItem>
               ))
-            : children.map((child) => (
-                <LegalDongSubMenu depth={depth + 1} key={child.code} parent={child} onSelect={onSelect} />
-              ))}
+            : children.map((child) => <LegalDongSubMenu depth={depth + 1} key={child.code} parent={child} />)}
         </MenuFetchState>
       </DropdownMenuSubContent>
     </DropdownMenuSub>
