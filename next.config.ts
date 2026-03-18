@@ -1,9 +1,21 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+const r2Host = process.env.NEXT_PUBLIC_R2_HOST
+
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  images: {
+    remotePatterns: r2Host ? [
+      {
+        protocol: 'https',
+        hostname: r2Host,
+        pathname: '/share/**',
+      },
+    ]
+      : [],
+  },
 
   turbopack: {
     rules: {
