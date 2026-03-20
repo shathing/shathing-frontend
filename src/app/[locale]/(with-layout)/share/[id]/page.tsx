@@ -2,21 +2,11 @@ import { shareApi } from "@/apis/share";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Link } from "@/i18n/navigation";
-import { ShareItem } from "@/types/models/share-item";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko";
-import { ChevronLeft, Heart, MapPin } from "lucide-react";
-import Image from "next/image";
+import ImageR2 from "@/components/ImageR2";
 import { notFound } from "next/navigation";
 import GoToBackBtn from "./GoToBackBtn";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-
-dayjs.extend(relativeTime);
-dayjs.locale("ko");
+import { getAgo } from "@/lib/getAgo";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -32,7 +22,8 @@ export default async function Page({ params }: Props) {
     shareItem.legalDong.sigunguName,
     shareItem.legalDong.eupMyeonDongName,
   ].join(" ");
-  const createdAtLabel = dayjs(shareItem.createdDate).fromNow();
+
+  const { ago } = await getAgo();
 
   return (
     <div className="mb-5">
@@ -46,12 +37,12 @@ export default async function Page({ params }: Props) {
               {shareItem.photoUrls.map((url, idx) => (
                 <CarouselItem key={idx}>
                   <AspectRatio ratio={1}>
-                    <Image
+                    <ImageR2
                       alt={shareItem.title}
                       className="object-cover rounded-lg"
                       fill
-                      priority={idx == 1}
-                      src={`${process.env.NEXT_PUBLIC_R2_BASE_URL}${url}`}
+                      preload={idx == 1}
+                      src={url}
                     />
                   </AspectRatio>
                 </CarouselItem>
@@ -70,6 +61,7 @@ export default async function Page({ params }: Props) {
                 <div className="text-xs text-muted-foreground">{locationLabel}</div>
               </div>
             </div>
+            {/* TODO: 채팅 */}
             <Button className="h-10 w-full text-base font-semibold">채팅으로 문의하기</Button>
           </div>
         </section>
@@ -78,7 +70,7 @@ export default async function Page({ params }: Props) {
           <article>
             <h1 className="text-2xl font-bold leading-snug tracking-tight md:text-3xl">{shareItem.title}</h1>
             <p className="text-sm text-muted-foreground">
-              {shareItem.category.name} · {createdAtLabel}
+              {shareItem.category.name} · {ago(shareItem.createdDate)}
             </p>
             <p>{shareItem.content}</p>
           </article>

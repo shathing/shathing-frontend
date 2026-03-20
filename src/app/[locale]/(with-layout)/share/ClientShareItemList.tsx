@@ -4,6 +4,7 @@ import { shareApi } from "@/apis/share";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import ShareItem from "./ShareItem";
 import { Button } from "@/components/ui/button";
+import { useAgo } from "@/hooks/useAgo";
 
 const PAGE_SIZE = 20;
 
@@ -19,10 +20,19 @@ export default function ClientShareItemList() {
 
   const shareItems = data?.pages.flatMap((page) => page.items) ?? [];
 
+  const { ago } = useAgo();
+
   return (
     <>
       {shareItems.map((item) => (
-        <ShareItem key={item.id} shareItem={item} />
+        <ShareItem
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          legalDong={item.legalDong}
+          photoUrls={item.photoUrls}
+          date={ago(item.createdDate)}
+        />
       ))}
       {hasNextPage && (
         <div className="col-span-full flex justify-center py-2">
