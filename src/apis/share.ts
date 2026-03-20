@@ -8,4 +8,5 @@ export const shareApi = {
   post: (request: SharePostRequest) => http.post("/share/post", request),
 
   getList: (params?: GetShareListRequest) => http.get<PageResponse<ShareItem>>("/share/posts", { params }),
+  getById: (id: number) => http.get<ShareItem>(`/share/posts/${id}`),
 }

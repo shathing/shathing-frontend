@@ -4,6 +4,7 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
+import { Link } from "@/i18n/navigation";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
@@ -12,7 +13,7 @@ export default function ShareItem({ shareItem }: { shareItem: ShareItemModel }) 
   const thumbnailUrl = process.env.NEXT_PUBLIC_R2_BASE_URL + shareItem.photoUrls[0];
 
   return (
-    <div className="flex flex-row sm:flex-col cursor-pointer group">
+    <Link className="flex flex-row sm:flex-col cursor-pointer group" href={`/share/${shareItem.id.toString()}`}>
       <div className="max-sm:w-20 max-sm:min-w-20 rounded-lg overflow-hidden">
         <AspectRatio ratio={1 / 1}>
           <Image
@@ -31,6 +32,6 @@ export default function ShareItem({ shareItem }: { shareItem: ShareItemModel }) 
           <time>{dayjs(shareItem.createdDate).fromNow()}</time>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
