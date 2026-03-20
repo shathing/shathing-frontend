@@ -30,7 +30,7 @@ export default async function Page({ params }: Props) {
       <div className="pb-3">
         <GoToBackBtn />
       </div>
-      <div className="sm:flex gap-5">
+      <div className="max-sm:space-y-5 sm:flex gap-5">
         <section className="w-full sm:w-1/2">
           <Carousel className="">
             <CarouselContent>
