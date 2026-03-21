@@ -1,0 +1,84 @@
+name: Sync Org Repo To Personal Repo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-to-personal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync_to_personal_repo:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_REPO_SLUG: ${{ vars.PERSONAL_REPO_SLUG }}
+      TARGET_REPO_BRANCH_OVERRIDE: ${{ vars.PERSONAL_REPO_BRANCH }}
+      TARGET_REPO_PAT: ${{ secrets.PERSONAL_REPO_PAT }}
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate required settings
+        run: |
+          : "${TARGET_REPO_SLUG:?Missing repository variable: PERSONAL_REPO_SLUG (example: your-id/your-repo)}"
+          : "${TARGET_REPO_PAT:?Missing repository secret: PERSONAL_REPO_PAT}"
+
+      - name: Resolve target branch
+        id: target_branch
+        run: |
+          if [ -n "${TARGET_REPO_BRANCH_OVERRIDE:-}" ]; then
+            echo "value=${TARGET_REPO_BRANCH_OVERRIDE}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push latest commit to personal repository (exclude .github/workflows)
+        env:
+          TARGET_BRANCH: ${{ steps.target_branch.outputs.value }}
+        run: |
+          set -euo pipefail
+
+          REMOTE_URL="https://x-access-token:${TARGET_REPO_PAT}@github.com/${TARGET_REPO_SLUG}.git"
+          SYNC_DIR="${RUNNER_TEMP}/personal-repo-sync"
+
+          echo "Sync ${GITHUB_REPOSITORY}@${GITHUB_SHA} -> ${TARGET_REPO_SLUG}:${TARGET_BRANCH}"
+          echo "Excluded path: .github/workflows/"
+
+          rm -rf "${SYNC_DIR}"
+
+          if git ls-remote --exit-code --heads "${REMOTE_URL}" "${TARGET_BRANCH}" >/dev/null 2>&1; then
+            git clone --depth=1 --branch "${TARGET_BRANCH}" "${REMOTE_URL}" "${SYNC_DIR}"
+          else
+            mkdir -p "${SYNC_DIR}"
+            git -C "${SYNC_DIR}" init
+            git -C "${SYNC_DIR}" checkout -b "${TARGET_BRANCH}"
+          fi
+
+          rsync -a --delete \
+            --exclude=".git/" \
+            --exclude=".github/workflows/" \
+            "${GITHUB_WORKSPACE}/" "${SYNC_DIR}/"
+
+          cd "${SYNC_DIR}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No content changes to sync."
+            exit 0
+          fi
+
+          git commit -m "sync: ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+          git remote remove origin >/dev/null 2>&1 || true
+          git remote add origin "${REMOTE_URL}"
+          git push origin "${TARGET_BRANCH}" --force
