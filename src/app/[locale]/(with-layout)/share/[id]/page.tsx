@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button";
 import ImageR2 from "@/components/ImageR2";
 import { notFound } from "next/navigation";
 import GoToBackBtn from "./GoToBackBtn";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselDots,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { getAgo } from "@/lib/getAgo";
 
 type Props = {
@@ -32,7 +39,7 @@ export default async function Page({ params }: Props) {
       </div>
       <div className="max-sm:space-y-5 sm:flex gap-5">
         <section className="w-full sm:w-1/2">
-          <Carousel className="">
+          <Carousel className="rounded-lg overflow-hidden">
             <CarouselContent>
               {shareItem.photoUrls.map((url, idx) => (
                 <CarouselItem key={idx}>
@@ -48,8 +55,9 @@ export default async function Page({ params }: Props) {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-5" />
-            <CarouselNext className="right-5" />
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselDots />
           </Carousel>
           <div>
             <div className="flex items-center gap-3 py-3">
