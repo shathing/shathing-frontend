@@ -22,9 +22,9 @@ export default function ShareThingsWordmark() {
     <span className="inline-flex items-baseline whitespace-nowrap" aria-label="Share things">
       <span>Sha</span>
       <motion.span
-        className="inline-block overflow-hidden will-change-[width,opacity,filter]"
-        initial={{ opacity: 1, filter: "blur(0px)", width: "2ch" }}
-        animate={{ opacity: 0, filter: "blur(8px)", width: 0 }}
+        className="inline-block overflow-hidden will-change-[width,opacity]"
+        initial={{ opacity: 1, width: "2ch" }}
+        animate={{ opacity: 0, width: 0 }}
         transition={WORDMARK_TRANSITION}
         aria-hidden
       >
@@ -41,9 +41,9 @@ export default function ShareThingsWordmark() {
       </motion.span>
       <span>thing</span>
       <motion.span
-        className="inline-block overflow-hidden will-change-[width,opacity,filter]"
-        initial={{ opacity: 1, filter: "blur(0px)", width: "1ch" }}
-        animate={{ opacity: 0, filter: "blur(8px)", width: 0 }}
+        className="inline-block overflow-hidden will-change-[width,opacity]"
+        initial={{ opacity: 1, width: "1ch" }}
+        animate={{ opacity: 0, width: 0 }}
         transition={WORDMARK_TRANSITION}
         aria-hidden
       >
