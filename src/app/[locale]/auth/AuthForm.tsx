@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -71,9 +72,8 @@ export function AuthForm() {
           )}
         </Field>
         <Field>
-          {/* TODO: 구글 OAuth */}
-          <Button variant="outline" type="button">
-            {t("continue-google")}
+          <Button variant="outline" asChild>
+            <Link href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`}>{t("continue-google")}</Link>
           </Button>
         </Field>
       </FieldGroup>
