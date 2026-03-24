@@ -3,7 +3,7 @@
 import { motion, type Transition, useReducedMotion } from "motion/react";
 
 const WORDMARK_TRANSITION: Transition = {
-  duration: 2,
+  duration: 1,
   delay: 1,
   ease: [0.22, 1, 0.36, 1] as const,
   repeat: Infinity,
