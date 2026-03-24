@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { AuthForm } from "./AuthForm";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { Separator } from "@/components/ui/separator";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 export async function generateMetadata() {
   const t = await getTranslations("Auth");
@@ -17,7 +18,7 @@ export default async function Page() {
   const t = await getTranslations("Auth");
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="flex min-h-svh w-full min-w-xs items-center justify-center p-5">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-5">
           <Link href="/">
@@ -34,6 +35,7 @@ export default async function Page() {
           <Separator orientation="horizontal" />
           <CardFooter className="flex h-5 items-center gap-4 text-sm">
             <LocaleSwitcher />
+            <ThemeSwitcher />
           </CardFooter>
         </Card>
       </div>
