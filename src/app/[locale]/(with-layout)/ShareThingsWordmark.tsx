@@ -20,9 +20,9 @@ export default function ShareThingsWordmark() {
 
   return (
     <span className="inline-flex items-baseline whitespace-nowrap" aria-label="Share things">
-      <span>Sha</span>
+      <span className="font-pretendard-block">Sha</span>
       <motion.span
-        className="inline-block overflow-hidden will-change-[width,opacity]"
+        className="inline-block overflow-hidden will-change-[width,opacity] font-pretendard-block"
         initial={{ opacity: 1, width: "2ch" }}
         animate={{ opacity: 0, width: 0 }}
         transition={WORDMARK_TRANSITION}
@@ -31,7 +31,7 @@ export default function ShareThingsWordmark() {
         re
       </motion.span>
       <motion.span
-        className="inline-block overflow-hidden"
+        className="inline-block overflow-hidden font-pretendard-block"
         initial={{ width: "0.35ch" }}
         animate={{ width: 0 }}
         transition={WORDMARK_TRANSITION}
@@ -39,9 +39,9 @@ export default function ShareThingsWordmark() {
       >
         {" "}
       </motion.span>
-      <span>thing</span>
+      <span className="font-pretendard-block">thing</span>
       <motion.span
-        className="inline-block overflow-hidden will-change-[width,opacity]"
+        className="inline-block overflow-hidden will-change-[width,opacity] font-pretendard-block"
         initial={{ opacity: 1, width: "1ch" }}
         animate={{ opacity: 0, width: 0 }}
         transition={WORDMARK_TRANSITION}
