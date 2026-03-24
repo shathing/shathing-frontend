@@ -21,8 +21,13 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  const { data: shareItem } = await shareApi.getById(Number(id));
-  if (!shareItem) notFound();
+  let shareItem = null;
+  try {
+    const { data } = await shareApi.getById(Number(id));
+    shareItem = data;
+  } catch {
+    notFound();
+  }
 
   const locationLabel = [
     shareItem.legalDong.sidoName,
