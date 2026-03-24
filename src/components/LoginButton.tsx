@@ -1,8 +1,9 @@
 "use client";
 
+import { authApi } from "@/apis/auth";
 import { Button } from "@/components/ui/button";
 import useGetMe from "@/hooks/apis/useGetMe";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -14,15 +15,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LoginButton({ isAuthenticated }: { isAuthenticated: boolean }) {
   const t = useTranslations("Header");
-  const pathname = usePathname();
-  const isAuthRoute = pathname.startsWith("/auth");
-  const shouldFetchMe = isAuthenticated && !isAuthRoute;
-  const { data, isPending } = useGetMe({ enabled: shouldFetchMe });
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data, isPending } = useGetMe({ enabled: isAuthenticated });
 
-  if (!shouldFetchMe) {
+  const logout = async () => {
+    try {
+      await authApi.logout();
+      queryClient.removeQueries({ queryKey: ["authApi.me"] });
+      router.refresh();
+    } catch {}
+  };
+
+  if (!isAuthenticated) {
     return (
       <Button asChild>
         <Link href="/auth">{t("login")}</Link>
@@ -45,15 +54,15 @@ export default function LoginButton({ isAuthenticated }: { isAuthenticated: bool
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-32">
           <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/me">Profile</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem variant="destructive">Log out</DropdownMenuItem>
+            <DropdownMenuItem variant="destructive" className="cursor-pointer" onClick={logout}>
+              Log out
+            </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
