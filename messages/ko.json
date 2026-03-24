@@ -4,7 +4,8 @@
   },
   "Header": {
     "login": "로그인",
-    "share": "공유"
+    "share": "공유",
+    "post": "글쓰기"
   },
   "LocaleSwitcher": {
     "label": "언어 변경",

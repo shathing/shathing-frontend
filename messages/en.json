@@ -4,7 +4,8 @@
   },
   "Header": {
     "login": "login",
-    "share": "share"
+    "share": "share",
+    "post": "post"
   },
   "LocaleSwitcher": {
     "label": "Change language",
