@@ -36,5 +36,55 @@
   },
   "Share": {
     "title": "Share"
+  },
+  "Home": {
+    "about-sharing": "ABOUT SHATHING",
+    "hero-description": "Borrow what you need and lend what you don't need right now.",
+    "browse-items": "Browse items",
+    "write-share-post": "Create a share post",
+    "stories": {
+      "label": "User stories",
+      "title": "Daily life changed after sharing things",
+      "items": {
+        "camping": {
+          "category": "Camping gear sharing",
+          "title": "I reduced clutter by borrowing only when needed",
+          "body": "For items like camping chairs and lanterns that I rarely use, I borrow locally and return them right away. My home feels lighter and costs are lower."
+        },
+        "appliance": {
+          "category": "Home appliance sharing",
+          "title": "Short-term needs solved without buying",
+          "body": "By sharing appliances like food dehydrators or steam irons that I only need during specific seasons, I avoid expensive purchases that sit unused."
+        },
+        "childcare": {
+          "category": "Childcare item sharing",
+          "title": "Neighbors rotate short-use items naturally",
+          "body": "By sharing baby products with short usage windows in the neighborhood, we can help each other right when it's needed."
+        },
+        "tools": {
+          "category": "Tool sharing",
+          "title": "I can quickly find one-time-use tools",
+          "body": "I can borrow occasional-use tools like power drills nearby, so even small home repairs get done much faster."
+        }
+      }
+    },
+    "reasons": {
+      "label": "Ask experts",
+      "title": "Why sharing things matters for us",
+      "items": {
+        "light-consumption": {
+          "title": "Lighter consumption",
+          "body": "When we focus on usage over ownership, one item can help more people solve needs at the right moment."
+        },
+        "local-connection": {
+          "title": "Stronger local ties",
+          "body": "As local borrow-and-return habits settle in, trusted relationships naturally grow in the neighborhood."
+        },
+        "circular-use": {
+          "title": "Sustainable circulation",
+          "body": "When one item is used by many people, its lifespan grows and unnecessary purchases and waste can be reduced."
+        }
+      }
+    }
   }
 }
