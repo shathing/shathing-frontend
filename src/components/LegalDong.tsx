@@ -16,11 +16,13 @@ import useGetLegalDongs from "@/hooks/apis/useGetLegalDongs";
 import { useShareSelectionStore } from "@/stores/share-selection";
 import type { LegalDong } from "@/types/models/legal-dong";
 import { RotateCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ReactNode, useState } from "react";
 
 const MAX_SUB_DEPTH = 2;
 
 export default function LegalDong() {
+  const t = useTranslations("Share");
   const [menuOpen, setMenuOpen] = useState(false);
   const selected = useShareSelectionStore((state) => state.selectedLegalDong);
   const { data, isPending, isError, refetch } = useGetLegalDongs({ enabled: menuOpen });
@@ -29,12 +31,12 @@ export default function LegalDong() {
   return (
     <DropdownMenu onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{selected?.name ?? "위치"}</Button>
+        <Button variant="outline">{selected?.name ?? t("location")}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuGroup>
           <MenuFetchState
-            emptyLabel="선택 가능한 시/도가 없습니다."
+            emptyLabel={t("location-empty-sido")}
             isError={isError}
             isPending={isPending}
             isEmpty={legalDongs.length === 0}
@@ -51,6 +53,7 @@ export default function LegalDong() {
 }
 
 function LegalDongSubMenu({ parent, depth }: { parent: LegalDong; depth: number }) {
+  const t = useTranslations("Share");
   const setSelectedLegalDong = useShareSelectionStore((state) => state.setSelectedLegalDong);
   const [open, setOpen] = useState(false);
   const { data, isPending, isError, refetch } = useGetLegalDongs({
@@ -65,7 +68,7 @@ function LegalDongSubMenu({ parent, depth }: { parent: LegalDong; depth: number 
       <DropdownMenuSubTrigger>{parent.name}</DropdownMenuSubTrigger>
       <DropdownMenuSubContent className="max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto">
         <MenuFetchState
-          emptyLabel={isLeafDepth ? "선택 가능한 동이 없습니다." : "선택 가능한 하위 지역이 없습니다."}
+          emptyLabel={isLeafDepth ? t("location-empty-dong") : t("location-empty-children")}
           isError={isError}
           isPending={isPending}
           isEmpty={children.length === 0}

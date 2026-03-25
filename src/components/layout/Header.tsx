@@ -20,7 +20,7 @@ export default async function Header() {
           <ul className="flex gap-5">
             {[
               { href: "/share", title: t("share") },
-              { href: "/share/post", title: t("post") },
+              { href: "/post", title: t("post") },
             ].map(({ href, title }, idx) => (
               <li key={idx}>
                 <Button asChild variant="ghost">

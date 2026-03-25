@@ -37,7 +37,69 @@
     "fail-verify-token": "This authentication link is invalid or has expired."
   },
   "Share": {
-    "title": "Share"
+    "title": "Share",
+    "load-more": "Load more",
+    "search-placeholder": "Search",
+    "empty-title": "No shared items yet.",
+    "empty-description": "Why not create the first post?",
+    "create-post": "Create post",
+    "back-to-list": "Back to list",
+    "contact-chat": "Contact via chat",
+    "category": "Category",
+    "location": "Location",
+    "location-empty-sido": "No available city/province options.",
+    "location-empty-dong": "No available dong options.",
+    "location-empty-children": "No available sub-area options."
+  },
+  "SharePost": {
+    "title": "Create a share post",
+    "description": "Register an item you can lend.",
+    "toast": {
+      "success": "Post created",
+      "error": "Failed to create post"
+    },
+    "validation": {
+      "title-required": "Please enter a title.",
+      "title-max": "Title must be within {max} characters.",
+      "content-required": "Please enter content.",
+      "content-max": "Content must be within {max} characters.",
+      "photo-invalid": "Invalid file.",
+      "photo-required": "Please add at least one photo.",
+      "photo-max": "You can upload up to {max} photos.",
+      "location-required": "Please select a location.",
+      "category-required": "Please select a category."
+    },
+    "fields": {
+      "title": {
+        "label": "Title",
+        "placeholder": "e.g. Lending 2 camping chairs"
+      },
+      "content": {
+        "label": "Content",
+        "placeholder": "Describe item condition, available times, and deposit details.",
+        "max-hint": "Up to {max} characters"
+      },
+      "photo": {
+        "label": "Photo",
+        "placeholder": "Click to upload photos",
+        "selected-count": "{count} selected"
+      },
+      "location": {
+        "label": "Location"
+      },
+      "category": {
+        "label": "Category"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Submit"
+    }
+  },
+  "Me": {
+    "title": "My profile",
+    "username": "Username",
+    "email": "Email"
   },
   "Home": {
     "about-sharing": "ABOUT SHATHING",

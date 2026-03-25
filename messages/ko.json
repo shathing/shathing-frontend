@@ -37,7 +37,69 @@
     "fail-verify-token": "인증 링크가 유효하지 않거나 만료되었습니다."
   },
   "Share": {
-    "title": "공유"
+    "title": "공유",
+    "load-more": "더보기",
+    "search-placeholder": "입력",
+    "empty-title": "아직 공유된 물건이 없습니다.",
+    "empty-description": "직접 등록해 보는 건 어떠신가요?",
+    "create-post": "등록하기",
+    "back-to-list": "목록",
+    "contact-chat": "채팅으로 문의하기",
+    "category": "카테고리",
+    "location": "위치",
+    "location-empty-sido": "선택 가능한 시/도가 없습니다.",
+    "location-empty-dong": "선택 가능한 동이 없습니다.",
+    "location-empty-children": "선택 가능한 하위 지역이 없습니다."
+  },
+  "SharePost": {
+    "title": "공유하기",
+    "description": "빌려줄 물건을 등록해 주세요.",
+    "toast": {
+      "success": "게시 완료",
+      "error": "게시 실패"
+    },
+    "validation": {
+      "title-required": "제목을 입력해 주세요.",
+      "title-max": "제목은 {max}자 이내로 입력해 주세요.",
+      "content-required": "내용을 입력해 주세요.",
+      "content-max": "내용은 {max}자 이내로 입력해 주세요.",
+      "photo-invalid": "유효한 파일이 아니에요.",
+      "photo-required": "사진을 등록해 주세요.",
+      "photo-max": "사진은 최대 {max}장까지 업로드할 수 있어요.",
+      "location-required": "위치를 선택해 주세요.",
+      "category-required": "카테고리를 선택해 주세요."
+    },
+    "fields": {
+      "title": {
+        "label": "제목",
+        "placeholder": "예) 캠핑 의자 2개 빌려드려요"
+      },
+      "content": {
+        "label": "내용",
+        "placeholder": "물품 상태, 대여 가능 시간, 보증금 여부 등을 자세히 적어주세요.",
+        "max-hint": "최대 {max}자"
+      },
+      "photo": {
+        "label": "사진",
+        "placeholder": "클릭해서 사진 업로드",
+        "selected-count": "{count}장 선택됨"
+      },
+      "location": {
+        "label": "위치"
+      },
+      "category": {
+        "label": "카테고리"
+      }
+    },
+    "actions": {
+      "cancel": "취소",
+      "submit": "등록"
+    }
+  },
+  "Me": {
+    "title": "내정보",
+    "username": "유저네임",
+    "email": "이메일"
   },
   "Home": {
     "about-sharing": "샤딩 소개",

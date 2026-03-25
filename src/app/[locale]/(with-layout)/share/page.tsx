@@ -6,8 +6,10 @@ import { getAgo } from "@/lib/getAgo";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 
 export default async function Page() {
+  const t = await getTranslations("Share");
   let shareItems = null;
 
   const { ago } = await getAgo();
@@ -37,12 +39,12 @@ export default async function Page() {
       ) : (
         <Empty>
           <EmptyHeader>
-            <EmptyTitle>아직 공유된 물건이 없습니다.</EmptyTitle>
-            <EmptyDescription>직접 등록해 보는건 어떠신가요?</EmptyDescription>
+            <EmptyTitle>{t("empty-title")}</EmptyTitle>
+            <EmptyDescription>{t("empty-description")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button asChild>
-              <Link href="/share/post">등록하기</Link>
+              <Link href="/post">{t("create-post")}</Link>
             </Button>
           </EmptyContent>
         </Empty>

@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import useGetMe from "@/hooks/apis/useGetMe";
+import { useTranslations } from "next-intl";
 
 export default function Page() {
+  const t = useTranslations("Me");
   const { data, isPending } = useGetMe();
 
   const email = data?.email ?? "-";
@@ -16,16 +18,16 @@ export default function Page() {
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader>
-            <CardTitle>내정보</CardTitle>
+            <CardTitle>{t("title")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">유저네임</p>
+              <p className="text-xs text-muted-foreground">{t("username")}</p>
               <p className="text-sm font-medium break-all">{isPending ? <Spinner /> : username}</p>
             </div>
             <Separator orientation="horizontal" />
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">이메일</p>
+              <p className="text-xs text-muted-foreground">{t("email")}</p>
               <p className="text-sm font-medium break-all">{isPending ? <Spinner /> : email}</p>
             </div>
           </CardContent>

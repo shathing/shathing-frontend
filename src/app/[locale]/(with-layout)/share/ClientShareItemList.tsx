@@ -5,10 +5,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import ShareItem from "./ShareItem";
 import { Button } from "@/components/ui/button";
 import { useAgo } from "@/hooks/useAgo";
+import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
 
 const PAGE_SIZE = 20;
 
 export default function ClientShareItemList() {
+  const t = useTranslations("Share");
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ["shareApi.getList"],
     queryFn: ({ pageParam }) =>
@@ -37,7 +40,7 @@ export default function ClientShareItemList() {
       {hasNextPage && (
         <div className="col-span-full flex justify-center py-2">
           <Button disabled={isFetchingNextPage} onClick={() => fetchNextPage()} variant="outline">
-            {isFetchingNextPage ? "불러오는 중..." : "더보기"}
+            {isFetchingNextPage ? <Spinner /> : t("load-more")}
           </Button>
         </div>
       )}

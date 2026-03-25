@@ -14,12 +14,14 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { getAgo } from "@/lib/getAgo";
+import { getTranslations } from "next-intl/server";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 export default async function Page({ params }: Props) {
+  const t = await getTranslations("Share");
   const { id } = await params;
   let shareItem = null;
   try {
@@ -75,7 +77,7 @@ export default async function Page({ params }: Props) {
               </div>
             </div>
             {/* TODO: 채팅 */}
-            <Button className="h-10 w-full text-base font-semibold">채팅으로 문의하기</Button>
+            <Button className="h-10 w-full text-base font-semibold">{t("contact-chat")}</Button>
           </div>
         </section>
 

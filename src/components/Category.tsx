@@ -14,9 +14,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { useShareSelectionStore } from "@/stores/share-selection";
 import { useQuery } from "@tanstack/react-query";
 import { RotateCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export default function Category() {
+  const t = useTranslations("Share");
   const [menuOpen, setMenuOpen] = useState(false);
   const selected = useShareSelectionStore((state) => state.selectedCategory);
   const setSelectedCategory = useShareSelectionStore((state) => state.setSelectedCategory);
@@ -39,7 +41,7 @@ export default function Category() {
   return (
     <DropdownMenu onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{selected?.name ?? "카테고리"}</Button>
+        <Button variant="outline">{selected?.name ?? t("category")}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuRadioGroup value={selectedValue} onValueChange={handleValueChange}>

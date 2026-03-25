@@ -66,7 +66,7 @@ export default async function Home() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link href="/share/post">{t("write-share-post")}</Link>
+                <Link href="/post">{t("write-share-post")}</Link>
               </Button>
             </div>
           </CardContent>
