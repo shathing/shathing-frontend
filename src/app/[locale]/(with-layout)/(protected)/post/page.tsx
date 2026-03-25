@@ -147,7 +147,7 @@ export default function Page() {
                 )}
               />
               <p className="text-muted-foreground text-xs">
-                {t("fields.content.max-hint", { max: CONTENT_MAX_LENGTH })}
+                {t("fields.content.max-hint", { max: CONTENT_MAX_LENGTH.toString() })}
               </p>
             </section>
 
@@ -165,7 +165,7 @@ export default function Page() {
                       <ImagePlus className="text-muted-foreground size-5" />
                       <p className="text-muted-foreground text-sm">
                         {field.value.length > 0
-                          ? t("fields.photo.selected-count", { count: field.value.length })
+                          ? t("fields.photo.selected-count", { count: field.value.length.toString() })
                           : t("fields.photo.placeholder")}
                       </p>
                     </label>
