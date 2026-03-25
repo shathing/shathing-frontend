@@ -5,7 +5,9 @@
   "Header": {
     "login": "로그인",
     "share": "공유",
-    "post": "글쓰기"
+    "post": "글쓰기",
+    "profile": "프로필",
+    "logout": "로그아웃"
   },
   "LocaleSwitcher": {
     "label": "언어 변경",

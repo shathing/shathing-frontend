@@ -5,7 +5,9 @@
   "Header": {
     "login": "login",
     "share": "share",
-    "post": "post"
+    "post": "post",
+    "profile": "Profile",
+    "logout": "Log out"
   },
   "LocaleSwitcher": {
     "label": "Change language",
