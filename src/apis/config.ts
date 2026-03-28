@@ -56,12 +56,13 @@ httpClient.interceptors.response.use(
 );
 
 const showToastWhenGlobalHandledStatusCode = (error: AxiosError) => {
-  if (isGlobalHandledStatusCode(error)) {
-    const showToast = error.response?.status !== 401;
-    if (showToast) {
-      const errorMessage = parseAxiosErrorMessage(error);
-      toast.error(errorMessage);
-    }
+  if (!isGlobalHandledStatusCode(error)) return
+  if (error.response?.status == 401) return
+  const errorMessage = parseAxiosErrorMessage(error);
+  if (isBrowser()) {
+    toast.error(errorMessage)
+  } else {
+    console.error(errorMessage)
   }
 };
 
