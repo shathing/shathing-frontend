@@ -32,7 +32,7 @@ export default function Category({ isSearch, category }: { isSearch?: boolean; c
   const locale = useLocale();
   const countryCode = locale == "ko" ? "KR" : "US";
   const { data, isPending, isError, refetch } = useQuery({
-    queryKey: ["categoryApi.getList"],
+    queryKey: ["categoryApi.getList", countryCode],
     queryFn: () => categoryApi.getList(countryCode).then(({ data }) => data),
     enabled: menuOpen,
     staleTime: Infinity,
