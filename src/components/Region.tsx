@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useShareItemPostStore } from "@/stores/useShareItemPostStore";
 import type { Region } from "@/types/models/region";
@@ -26,6 +26,7 @@ export default function Region({ isSearch, region }: { isSearch?: boolean; regio
   const locale = useLocale();
   const countryCode = locale == "ko" ? "KR" : "US";
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const { data, isPending } = useQuery({
@@ -38,7 +39,7 @@ export default function Region({ isSearch, region }: { isSearch?: boolean; regio
   const choiceRegion = (region: Region) => {
     if (isSearch) {
       const prevQuery = Object.fromEntries(searchParams.entries());
-      router.push({ pathname: "/share", query: { ...prevQuery, regionId: region.id } });
+      router.push({ pathname, query: { ...prevQuery, regionId: region.id } });
     } else {
       setSelectedRegion(region);
     }
