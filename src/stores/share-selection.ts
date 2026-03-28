@@ -2,13 +2,13 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { Category } from "@/types/models/category";
-import type { LegalDong } from "@/types/models/legal-dong";
+import type { Location } from "@/types/models/location";
 
 type ShareSelectionState = {
   selectedCategory: Category | null;
-  selectedLegalDong: LegalDong | null;
+  selectedLegalDong: Location | null;
   setSelectedCategory: (category: Category | null) => void;
-  setSelectedLegalDong: (dong: LegalDong | null) => void;
+  setSelectedLegalDong: (dong: Location | null) => void;
   resetSelections: () => void;
 };
 

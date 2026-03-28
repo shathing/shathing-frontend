@@ -1,4 +1,4 @@
-export interface LegalDong {
+export interface Location {
   code: string;
   name: string;
 }
