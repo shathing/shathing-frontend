@@ -14,7 +14,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import useGetLegalDongs from "@/hooks/apis/useGetLegalDongs";
 import { useShareSelectionStore } from "@/stores/share-selection";
-import type { LegalDong } from "@/types/models/legal-dong";
+import type { Location } from "@/types/models/location";
 import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactNode, useState } from "react";
@@ -52,7 +52,7 @@ export default function LegalDong() {
   );
 }
 
-function LegalDongSubMenu({ parent, depth }: { parent: LegalDong; depth: number }) {
+function LegalDongSubMenu({ parent, depth }: { parent: Location; depth: number }) {
   const t = useTranslations("Share");
   const setSelectedLegalDong = useShareSelectionStore((state) => state.setSelectedLegalDong);
   const [open, setOpen] = useState(false);
