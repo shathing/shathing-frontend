@@ -6,3 +6,5 @@ export interface PageResponse<T> {
   totalElements: number;
   totalPages: number;
 }
+
+export type CountryCode = "KR" | "US"

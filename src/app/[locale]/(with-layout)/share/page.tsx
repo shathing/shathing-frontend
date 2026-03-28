@@ -6,8 +6,9 @@ import { getAgo } from "@/lib/getAgo";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { regionApi } from "@/apis/region";
+import { categoryApi } from "@/apis/category";
 
 export default async function Page({
   searchParams,
@@ -17,7 +18,9 @@ export default async function Page({
   const t = await getTranslations("Share");
   const { categoryId, regionId } = await searchParams;
   let region = undefined;
+  let category = undefined;
   let shareItems = null;
+  const locale = await getLocale();
 
   const { ago } = await getAgo();
 
@@ -30,8 +33,21 @@ export default async function Page({
         console.error(e);
       }
     }
-    console.log("region", region);
-    const { data } = await shareApi.getList({ categoryId, regionId: region ? regionId : undefined });
+    if (categoryId) {
+      try {
+        const { data } = await categoryApi.getCategory({
+          categoryId: Number(categoryId),
+          countryCode: locale == "ko" ? "KR" : "US",
+        });
+        category = data;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const { data } = await shareApi.getList({
+      categoryId: category ? categoryId : undefined,
+      regionId: region ? regionId : undefined,
+    });
     shareItems = data;
   } catch (e) {
     console.error(e);
@@ -39,7 +55,7 @@ export default async function Page({
 
   return (
     <div className="space-y-2.5 my-2.5 relative">
-      <SearchBar region={region} />
+      <SearchBar region={region} category={category} />
       {shareItems ? (
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {shareItems?.items.map((item) => (

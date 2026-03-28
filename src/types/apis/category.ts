@@ -1,6 +1,6 @@
 import { CountryCode } from "./common";
 
-export interface RegionRequest {
+export interface CategoryRequest {
+  categoryId: number
   countryCode: CountryCode,
-  search?: string,
 }
