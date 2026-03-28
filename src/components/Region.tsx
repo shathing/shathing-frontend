@@ -28,6 +28,7 @@ export default function Region({ isSearch, region }: { isSearch?: boolean; regio
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const regionText = isSearch ? (region?.name ?? t("region")) : (selectedRegion?.name ?? t("region"));
 
   const { data, isPending } = useQuery({
     queryKey: ["regionApi.getList", countryCode, debouncedSearch],
@@ -50,7 +51,7 @@ export default function Region({ isSearch, region }: { isSearch?: boolean; regio
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{region?.name ?? t("region")}</Button>
+        <Button variant="outline">{regionText}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
