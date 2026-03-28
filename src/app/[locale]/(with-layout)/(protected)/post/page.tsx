@@ -3,13 +3,13 @@
 import { shareApi } from "@/apis/share";
 import { fileApi } from "@/apis/file";
 import Category from "@/components/Category";
-import LegalDong from "@/components/LegalDong";
+import Location from "@/components/Location";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useShareSelectionStore } from "@/stores/share-selection";
+import { useShareItemPostStore } from "@/stores/useShareItemPostStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePlus, MapPin, Tags } from "lucide-react";
 import { useEffect } from "react";
@@ -26,8 +26,8 @@ const PHOTO_MAX_COUNT = 10;
 export default function Page() {
   const t = useTranslations("SharePost");
   const router = useRouter();
-  const selectedLegalDong = useShareSelectionStore((state) => state.selectedLegalDong);
-  const selectedCategory = useShareSelectionStore((state) => state.selectedCategory);
+  const selectedLocation = useShareItemPostStore((state) => state.selectedLocation);
+  const selectedCategory = useShareItemPostStore((state) => state.selectedCategory);
 
   const postFormSchema = z.object({
     title: z
@@ -55,19 +55,19 @@ export default function Page() {
       title: "",
       content: "",
       photoUrls: [],
-      locationCode: selectedLegalDong?.code ?? "",
-      categoryId: selectedCategory ? selectedCategory.id.toString() : "",
+      locationCode: selectedLocation?.code ?? "",
+      categoryId: selectedCategory?.id.toString() ?? "",
     },
   });
 
   useEffect(() => {
-    form.setValue("locationCode", selectedLegalDong?.code ?? "", {
+    form.setValue("locationCode", selectedLocation?.code ?? "", {
       shouldValidate: form.formState.submitCount > 0,
     });
-  }, [selectedLegalDong, form]);
+  }, [selectedLocation, form]);
 
   useEffect(() => {
-    form.setValue("categoryId", selectedCategory ? selectedCategory.id.toString() : "", {
+    form.setValue("categoryId", selectedCategory?.id.toString() ?? "", {
       shouldValidate: form.formState.submitCount > 0,
     });
   }, [selectedCategory, form]);
@@ -192,7 +192,7 @@ export default function Page() {
                   <MapPin className="size-4" />
                   {t("fields.location.label")}
                 </FieldLabel>
-                <LegalDong />
+                <Location />
                 {form.formState.errors.locationCode && <FieldError errors={[form.formState.errors.locationCode]} />}
               </div>
               <div className="flex gap-2 items-center">
