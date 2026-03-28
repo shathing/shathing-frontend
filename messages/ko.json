@@ -46,10 +46,9 @@
     "back-to-list": "목록",
     "contact-chat": "채팅으로 문의하기",
     "category": "카테고리",
-    "location": "위치",
-    "location-empty-sido": "선택 가능한 시/도가 없습니다.",
-    "location-empty-dong": "선택 가능한 동이 없습니다.",
-    "location-empty-children": "선택 가능한 하위 지역이 없습니다."
+    "region": "지역",
+    "region-change-title": "지역 변경",
+    "region-empty": "검색 결과가 없습니다."
   },
   "SharePost": {
     "title": "공유하기",

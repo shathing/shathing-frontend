@@ -46,10 +46,9 @@
     "back-to-list": "Back to list",
     "contact-chat": "Contact via chat",
     "category": "Category",
-    "location": "Location",
-    "location-empty-sido": "No available city/province options.",
-    "location-empty-dong": "No available dong options.",
-    "location-empty-children": "No available sub-area options."
+    "region": "Region",
+    "region-change-title": "Change region",
+    "region-empty": "No matching regions found."
   },
   "SharePost": {
     "title": "Create a share post",

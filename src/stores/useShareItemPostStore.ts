@@ -1,19 +1,26 @@
 import { create } from "zustand";
 import type { Category } from "@/types/models/category";
-import type { Location } from "@/types/models/location";
+import type { Region } from "@/types/models/region";
 
 type ShareItemPostState = {
   selectedCategory: Category | null;
-  selectedLocation: Location | null;
-  setSelectedCategory: (category: Category | null) => void;
-  setSelectedLocation: (location: Location | null) => void;
+  selectedRegion: Region | null;
 };
 
-export const useShareItemPostStore = create<ShareItemPostState>()(
+type ShareItemPostActions = {
+  setSelectedCategory: (category: Category | null) => void;
+  setSelectedRegion: (region: Region | null) => void;
+}
+
+const initialState: ShareItemPostState = {
+  selectedCategory: null,
+  selectedRegion: null,
+}
+
+export const useShareItemPostStore = create<ShareItemPostState & ShareItemPostActions>()(
   (set) => ({
-    selectedCategory: null,
-    selectedLocation: null,
+    ...initialState,
     setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
-    setSelectedLocation: (selectedLocation) => set({ selectedLocation }),
+    setSelectedRegion: (selectedRegion) => set({ selectedRegion }),
   })
 );

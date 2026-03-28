@@ -2,7 +2,7 @@ export interface SharePostRequest {
   title: string,
   content: string,
   photoUrls: string[],
-  legalDongCode: string,
+  regionId: number,
   categoryId: number,
 }
 

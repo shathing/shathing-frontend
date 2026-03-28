@@ -3,7 +3,7 @@
 import { shareApi } from "@/apis/share";
 import { fileApi } from "@/apis/file";
 import Category from "@/components/Category";
-import Location from "@/components/Location";
+import Region from "@/components/Region";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, FieldLabel } from "@/components/ui/field";
@@ -26,7 +26,7 @@ const PHOTO_MAX_COUNT = 10;
 export default function Page() {
   const t = useTranslations("SharePost");
   const router = useRouter();
-  const selectedLocation = useShareItemPostStore((state) => state.selectedLocation);
+  const selectedRegion = useShareItemPostStore((state) => state.selectedRegion);
   const selectedCategory = useShareItemPostStore((state) => state.selectedCategory);
 
   const postFormSchema = z.object({
@@ -44,7 +44,7 @@ export default function Page() {
       .array(z.custom<File>((value) => value instanceof File, t("validation.photo-invalid")))
       .min(1, t("validation.photo-required"))
       .max(PHOTO_MAX_COUNT, t("validation.photo-max", { max: PHOTO_MAX_COUNT.toString() })),
-    locationCode: z.string().min(1, t("validation.location-required")),
+    regionId: z.string().min(1, t("validation.location-required")),
     categoryId: z.string().min(1, t("validation.category-required")),
   });
   type PostFormValues = z.infer<typeof postFormSchema>;
@@ -55,16 +55,16 @@ export default function Page() {
       title: "",
       content: "",
       photoUrls: [],
-      locationCode: selectedLocation?.code ?? "",
+      regionId: selectedRegion?.id.toString() ?? "",
       categoryId: selectedCategory?.id.toString() ?? "",
     },
   });
 
   useEffect(() => {
-    form.setValue("locationCode", selectedLocation?.code ?? "", {
+    form.setValue("regionId", selectedRegion?.id.toString() ?? "", {
       shouldValidate: form.formState.submitCount > 0,
     });
-  }, [selectedLocation, form]);
+  }, [selectedRegion, form]);
 
   useEffect(() => {
     form.setValue("categoryId", selectedCategory?.id.toString() ?? "", {
@@ -89,7 +89,7 @@ export default function Page() {
         title: values.title,
         content: values.content,
         photoUrls,
-        legalDongCode: values.locationCode,
+        regionId: Number(values.regionId),
         categoryId: Number(values.categoryId),
       });
       toast.success(t("toast.success"));
@@ -192,8 +192,8 @@ export default function Page() {
                   <MapPin className="size-4" />
                   {t("fields.location.label")}
                 </FieldLabel>
-                <Location />
-                {form.formState.errors.locationCode && <FieldError errors={[form.formState.errors.locationCode]} />}
+                <Region />
+                {form.formState.errors.regionId && <FieldError errors={[form.formState.errors.regionId]} />}
               </div>
               <div className="flex gap-2 items-center">
                 <FieldLabel className="inline-flex items-center gap-1">
