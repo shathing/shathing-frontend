@@ -6,9 +6,9 @@ export interface SharePostRequest {
   categoryId: number,
 }
 
-export interface GetShareListRequest {
+export interface GetShareItemsRequest {
   categoryId?: string,
-  legalDongCode?: string,
+  regionId?: string,
   page?: number,
   size?: number,
 }

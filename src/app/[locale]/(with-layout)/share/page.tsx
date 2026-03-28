@@ -7,21 +7,39 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
+import { regionApi } from "@/apis/region";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ categoryId?: string; regionId?: string }>;
+}) {
   const t = await getTranslations("Share");
+  const { categoryId, regionId } = await searchParams;
+  let region = undefined;
   let shareItems = null;
 
   const { ago } = await getAgo();
 
   try {
-    const { data } = await shareApi.getList();
+    if (regionId) {
+      try {
+        const { data } = await regionApi.getRegion(Number(regionId));
+        region = data;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    console.log("region", region);
+    const { data } = await shareApi.getList({ categoryId, regionId: region ? regionId : undefined });
     shareItems = data;
-  } catch {}
+  } catch (e) {
+    console.error(e);
+  }
 
   return (
     <div className="space-y-2.5 my-2.5 relative">
-      <SearchBar />
+      <SearchBar region={region} />
       {shareItems ? (
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {shareItems?.items.map((item) => (
@@ -34,7 +52,7 @@ export default async function Page() {
               date={ago(item.createdDate)}
             />
           ))}
-          <ClientShareItemList />
+          <ClientShareItemList categoryId={categoryId} regionId={region?.id.toString()} />
         </div>
       ) : (
         <Empty>

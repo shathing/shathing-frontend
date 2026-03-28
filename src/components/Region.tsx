@@ -6,15 +6,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useShareItemPostStore } from "@/stores/useShareItemPostStore";
 import type { Region } from "@/types/models/region";
 import { useQuery } from "@tanstack/react-query";
 import { CheckIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function Region() {
+export default function Region({ isSearch, region }: { isSearch?: boolean; region?: Region }) {
   const t = useTranslations("Share");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -23,6 +25,8 @@ export default function Region() {
   const setSelectedRegion = useShareItemPostStore((state) => state.setSelectedRegion);
   const locale = useLocale();
   const countryCode = locale == "ko" ? "KR" : "US";
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { data, isPending } = useQuery({
     queryKey: ["regionApi.getList", countryCode, debouncedSearch],
@@ -31,10 +35,21 @@ export default function Region() {
   });
   const regions = data ?? [];
 
+  const choiceRegion = (region: Region) => {
+    if (isSearch) {
+      const prevQuery = Object.fromEntries(searchParams.entries());
+      router.push({ pathname: "/share", query: { ...prevQuery, regionId: region.id } });
+    } else {
+      setSelectedRegion(region);
+    }
+    setSearch("");
+    setOpen(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{selectedRegion?.name ?? t("region")}</Button>
+        <Button variant="outline">{region?.name ?? t("region")}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -59,11 +74,7 @@ export default function Region() {
                     "flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-accent cursor-pointer",
                     isSelected && "bg-accent text-accent-foreground",
                   )}
-                  onClick={() => {
-                    setSelectedRegion(region);
-                    setOpen(false);
-                    setSearch("");
-                  }}
+                  onClick={() => choiceRegion(region)}
                 >
                   <span>{region.fullName}</span>
                   {isSelected && <CheckIcon className="size-4 shrink-0" />}

@@ -10,12 +10,12 @@ import { useTranslations } from "next-intl";
 
 const PAGE_SIZE = 20;
 
-export default function ClientShareItemList() {
+export default function ClientShareItemList({ categoryId, regionId }: { categoryId?: string; regionId?: string }) {
   const t = useTranslations("Share");
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
-    queryKey: ["shareApi.getList"],
+    queryKey: ["shareApi.getList", categoryId, regionId],
     queryFn: ({ pageParam }) =>
-      shareApi.getList({ page: pageParam, size: PAGE_SIZE }).then((response) => response.data),
+      shareApi.getList({ page: pageParam, size: PAGE_SIZE, categoryId, regionId }).then((response) => response.data),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
     gcTime: 0,
