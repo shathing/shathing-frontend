@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
-import { useShareSelectionStore } from "@/stores/share-selection";
+import { useShareItemPostStore } from "@/stores/useShareItemPostStore";
 import { useQuery } from "@tanstack/react-query";
 import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -20,8 +20,8 @@ import { useState } from "react";
 export default function Category() {
   const t = useTranslations("Share");
   const [menuOpen, setMenuOpen] = useState(false);
-  const selected = useShareSelectionStore((state) => state.selectedCategory);
-  const setSelectedCategory = useShareSelectionStore((state) => state.setSelectedCategory);
+  const selectedCategory = useShareItemPostStore((state) => state.selectedCategory);
+  const setSelectedCategory = useShareItemPostStore((state) => state.setSelectedCategory);
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["categoryApi.getList"],
     queryFn: () => categoryApi.getList().then(({ data }) => data),
@@ -29,7 +29,7 @@ export default function Category() {
     staleTime: Infinity,
   });
   const categories = data ?? [];
-  const selectedValue = selected ? selected.id.toString() : undefined;
+  const selectedValue = selectedCategory?.id.toString();
 
   const handleValueChange = (value: string) => {
     const picked = categories.find((category) => category.id.toString() === value);
@@ -41,7 +41,7 @@ export default function Category() {
   return (
     <DropdownMenu onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{selected?.name ?? t("category")}</Button>
+        <Button variant="outline">{selectedCategory?.name ?? t("category")}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuRadioGroup value={selectedValue} onValueChange={handleValueChange}>

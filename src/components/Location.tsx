@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
 import useGetLegalDongs from "@/hooks/apis/useGetLegalDongs";
-import { useShareSelectionStore } from "@/stores/share-selection";
+import { useShareItemPostStore } from "@/stores/useShareItemPostStore";
 import type { Location } from "@/types/models/location";
 import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -21,17 +21,17 @@ import { ReactNode, useState } from "react";
 
 const MAX_SUB_DEPTH = 2;
 
-export default function LegalDong() {
+export default function Location() {
   const t = useTranslations("Share");
   const [menuOpen, setMenuOpen] = useState(false);
-  const selected = useShareSelectionStore((state) => state.selectedLegalDong);
+  const selectedLocation = useShareItemPostStore((state) => state.selectedLocation);
   const { data, isPending, isError, refetch } = useGetLegalDongs({ enabled: menuOpen });
   const legalDongs = data ?? [];
 
   return (
     <DropdownMenu onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{selected?.name ?? t("location")}</Button>
+        <Button variant="outline">{selectedLocation?.name ?? t("location")}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuGroup>
@@ -54,7 +54,7 @@ export default function LegalDong() {
 
 function LegalDongSubMenu({ parent, depth }: { parent: Location; depth: number }) {
   const t = useTranslations("Share");
-  const setSelectedLegalDong = useShareSelectionStore((state) => state.setSelectedLegalDong);
+  const setSelectedLocation = useShareItemPostStore((state) => state.setSelectedLocation);
   const [open, setOpen] = useState(false);
   const { data, isPending, isError, refetch } = useGetLegalDongs({
     code: parent.code,
@@ -76,7 +76,7 @@ function LegalDongSubMenu({ parent, depth }: { parent: Location; depth: number }
         >
           {isLeafDepth
             ? children.map((child) => (
-                <DropdownMenuItem key={child.code} onSelect={() => setSelectedLegalDong(child)}>
+                <DropdownMenuItem key={child.code} onSelect={() => setSelectedLocation(child)}>
                   {child.name}
                 </DropdownMenuItem>
               ))
