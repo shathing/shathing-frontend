@@ -63,7 +63,7 @@ export default async function Page({
               key={item.id}
               id={item.id}
               title={item.title}
-              legalDong={item.legalDong}
+              region={item.region}
               photoUrls={item.photoUrls}
               date={ago(item.createdDate)}
             />

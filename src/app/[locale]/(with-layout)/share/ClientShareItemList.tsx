@@ -32,7 +32,7 @@ export default function ClientShareItemList({ categoryId, regionId }: { category
           key={item.id}
           id={item.id}
           title={item.title}
-          legalDong={item.legalDong}
+          region={item.region}
           photoUrls={item.photoUrls}
           date={ago(item.createdDate)}
         />

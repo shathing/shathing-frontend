@@ -31,11 +31,7 @@ export default async function Page({ params }: Props) {
     notFound();
   }
 
-  const locationLabel = [
-    shareItem.legalDong.sidoName,
-    shareItem.legalDong.sigunguName,
-    shareItem.legalDong.eupMyeonDongName,
-  ].join(" ");
+  const locationLabel = shareItem.region.fullName;
 
   const { ago } = await getAgo();
 

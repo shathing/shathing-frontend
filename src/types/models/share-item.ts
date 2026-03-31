@@ -1,4 +1,5 @@
 import { Category } from "./category";
+import { Region } from "./region";
 
 export interface ShareItem {
   id: number;
@@ -10,11 +11,6 @@ export interface ShareItem {
   member: {
     id: number;
     username: string;
-  }
-  legalDong: {
-    code: string;
-    sidoName: string;
-    sigunguName: string;
-    eupMyeonDongName: string;
-  }
+  };
+  region: Region;
 }
