@@ -69,7 +69,7 @@ export default function Category({ isSearch, category }: { isSearch?: boolean; c
             </DropdownMenuItem>
           ) : (
             categories.map((category) => (
-              <DropdownMenuRadioItem key={category.id} value={category.id.toString()}>
+              <DropdownMenuRadioItem key={category.id} value={category.id.toString()} className="cursor-pointer">
                 {category.name}
               </DropdownMenuRadioItem>
             ))
