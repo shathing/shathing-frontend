@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
+import { authApi } from "./auth";
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -26,6 +27,7 @@ const shouldRetryWithRefresh = (error: AxiosError, request: RetryableRequestConf
 
 const handleRefreshFailure = (refreshError: unknown) => {
   if (isBrowser()) {
+    authApi.logout()
     window.location.href = AUTH_REDIRECT_PATH;
   }
   return Promise.reject(refreshError);
@@ -41,7 +43,7 @@ httpClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (!originalRequest) {
+    if (!originalRequest || !originalRequest._retry) {
       return Promise.reject(error);
     }
 
