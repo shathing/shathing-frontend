@@ -9,6 +9,7 @@ export interface SharePostRequest {
 export interface GetShareItemsRequest {
   categoryId?: string,
   regionId?: string,
+  search?: string,
   page?: number,
   size?: number,
 }

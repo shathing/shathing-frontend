@@ -13,10 +13,10 @@ import { categoryApi } from "@/apis/category";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ categoryId?: string; regionId?: string }>;
+  searchParams: Promise<{ categoryId?: string; regionId?: string; search?: string }>;
 }) {
   const t = await getTranslations("Share");
-  const { categoryId, regionId } = await searchParams;
+  const { categoryId, regionId, search } = await searchParams;
   let region = undefined;
   let category = undefined;
   let shareItems = null;
@@ -47,6 +47,7 @@ export default async function Page({
     const { data } = await shareApi.getList({
       categoryId: category ? categoryId : undefined,
       regionId: region ? regionId : undefined,
+      search,
     });
     shareItems = data;
   } catch (e) {
@@ -55,7 +56,7 @@ export default async function Page({
 
   return (
     <div className="space-y-2.5 my-2.5 relative">
-      <SearchBar region={region} category={category} />
+      <SearchBar key={`${categoryId ?? ""}:${regionId ?? ""}:${search ?? ""}`} region={region} category={category} search={search} />
       {shareItems ? (
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {shareItems?.items.map((item) => (
@@ -68,7 +69,7 @@ export default async function Page({
               date={ago(item.createdDate)}
             />
           ))}
-          <ClientShareItemList categoryId={categoryId} regionId={region?.id.toString()} />
+          <ClientShareItemList categoryId={categoryId} regionId={region?.id.toString()} search={search} />
         </div>
       ) : (
         <Empty>
