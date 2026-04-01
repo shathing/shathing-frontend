@@ -6,6 +6,7 @@
     "login": "login",
     "share": "share",
     "post": "post",
+    "chat": "chat",
     "profile": "Profile",
     "logout": "Log out"
   },
@@ -99,6 +100,16 @@
     "title": "My profile",
     "username": "Username",
     "email": "Email"
+  },
+  "Chat": {
+    "title": "Messages",
+    "new-chat": "New message",
+    "search-placeholder": "Search messages",
+    "active-now": "Active now",
+    "start-chat": "Start a conversation",
+    "attach-image": "Attach image",
+    "message-placeholder": "Write a message...",
+    "send": "Send"
   },
   "Home": {
     "about-sharing": "ABOUT SHATHING",

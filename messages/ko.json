@@ -6,6 +6,7 @@
     "login": "로그인",
     "share": "공유",
     "post": "글쓰기",
+    "chat": "채팅",
     "profile": "프로필",
     "logout": "로그아웃"
   },
@@ -99,6 +100,16 @@
     "title": "내정보",
     "username": "유저네임",
     "email": "이메일"
+  },
+  "Chat": {
+    "title": "메시지",
+    "new-chat": "새 메시지",
+    "search-placeholder": "채팅 검색",
+    "active-now": "활동 중",
+    "start-chat": "채팅을 시작해보세요",
+    "attach-image": "이미지 첨부",
+    "message-placeholder": "메시지를 입력하세요...",
+    "send": "보내기"
   },
   "Home": {
     "about-sharing": "샤딩 소개",

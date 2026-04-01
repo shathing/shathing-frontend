@@ -21,6 +21,7 @@ export default async function Header() {
             {[
               { href: "/share", title: t("share") },
               { href: "/post", title: t("post") },
+              { href: "/chat", title: t("chat") },
             ].map(({ href, title }, idx) => (
               <li key={idx}>
                 <Button asChild variant="ghost">
