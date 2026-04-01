@@ -1,10 +1,10 @@
 import { shareApi } from "@/apis/share";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import ImageR2 from "@/components/ImageR2";
 import { notFound } from "next/navigation";
 import GoToBackBtn from "./GoToBackBtn";
+import StartChatButton from "./StartChatButton";
 import {
   Carousel,
   CarouselContent,
@@ -72,8 +72,7 @@ export default async function Page({ params }: Props) {
                 <div className="text-xs text-muted-foreground">{locationLabel}</div>
               </div>
             </div>
-            {/* TODO: 채팅 */}
-            <Button className="h-10 w-full text-base font-semibold">{t("contact-chat")}</Button>
+            <StartChatButton label={t("contact-chat")} otherMemberId={shareItem.member.id} />
           </div>
         </section>
 
