@@ -9,71 +9,11 @@ import { useQuery } from "@tanstack/react-query";
 import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-type ChatListItem = {
-  id: string;
-  username: string;
-  preview: string;
-  time: string;
-  unread: number;
-  updatedAt?: string;
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
-
-const toStringValue = (value: unknown) => (typeof value === "string" ? value : undefined);
-
-const toNumberValue = (value: unknown) => (typeof value === "number" ? value : undefined);
-
-const parseRoomItems = (payload: unknown): unknown[] => {
-  if (Array.isArray(payload)) return payload;
-  if (!isRecord(payload)) return [];
-
-  const candidates = [payload.items, payload.content, payload.rooms, payload.chatRooms, payload.data];
-  for (const candidate of candidates) {
-    if (Array.isArray(candidate)) return candidate;
-  }
-  return [];
-};
-
 const formatListTime = (dateValue?: string) => {
   if (!dateValue) return "";
   const date = new Date(dateValue);
   if (Number.isNaN(date.getTime())) return "";
   return date.toLocaleDateString();
-};
-
-const normalizeRoom = (payload: unknown): ChatListItem | null => {
-  if (!isRecord(payload)) return null;
-
-  const id = toNumberValue(payload.id) ?? Number(payload.id);
-  if (!Number.isFinite(id)) return null;
-
-  const otherMember = isRecord(payload.otherMember) ? payload.otherMember : undefined;
-  const username =
-    toStringValue(payload.otherMemberUsername) ??
-    toStringValue(payload.otherUsername) ??
-    toStringValue(otherMember?.username) ??
-    `room-${id}`;
-  const preview =
-    toStringValue(payload.lastMessage) ??
-    toStringValue(payload.lastMessageContent) ??
-    toStringValue(payload.recentMessage) ??
-    "";
-  const updatedAt =
-    toStringValue(payload.lastMessageCreatedDate) ??
-    toStringValue(payload.lastMessageCreatedAt) ??
-    toStringValue(payload.updatedAt) ??
-    toStringValue(payload.createdDate);
-  const unread = toNumberValue(payload.unreadCount) ?? toNumberValue(payload.unread) ?? 0;
-
-  return {
-    id: String(id),
-    username,
-    preview,
-    time: formatListTime(updatedAt),
-    unread,
-    updatedAt,
-  };
 };
 
 export default function ChatList({ className }: { className?: string }) {
@@ -90,14 +30,11 @@ export default function ChatList({ className }: { className?: string }) {
     queryKey: ["chatApi.getRooms"],
     queryFn: async () => {
       const { data } = await chatApi.getRooms();
-      return parseRoomItems(data)
-        .map(normalizeRoom)
-        .filter((room): room is ChatListItem => room !== null)
-        .sort((a, b) => {
-          if (!a.updatedAt) return 1;
-          if (!b.updatedAt) return -1;
-          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-        });
+      return [...data].sort((a, b) => {
+        if (!a.lastMessageAt) return 1;
+        if (!b.lastMessageAt) return -1;
+        return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
+      });
     },
   });
 
@@ -128,7 +65,7 @@ export default function ChatList({ className }: { className?: string }) {
       ) : (
         <ul className="flex-1 overflow-y-auto">
           {chatList.map((thread) => {
-            const isActive = activeRoomId === thread.id;
+            const isActive = activeRoomId === thread.id.toString();
 
             return (
               <li key={thread.id}>
@@ -141,20 +78,15 @@ export default function ChatList({ className }: { className?: string }) {
                   onClick={() => router.push(`/chat/${thread.id}`)}
                 >
                   <Avatar>
-                    <AvatarFallback>{thread.username.slice(0, 1).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{thread.otherMember.username.slice(0, 1).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-sm font-semibold">{thread.username}</p>
-                      <span className="text-xs text-muted-foreground">{thread.time}</span>
+                      <p className="truncate text-sm font-semibold">{thread.otherMember.username}</p>
+                      <span className="text-xs text-muted-foreground">{formatListTime(thread.lastMessageAt ?? undefined)}</span>
                     </div>
-                    <p className="truncate text-sm text-muted-foreground">{thread.preview}</p>
+                    <p className="truncate text-sm text-muted-foreground">{thread.lastMessage ?? ""}</p>
                   </div>
-                  {thread.unread > 0 && (
-                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
-                      {thread.unread}
-                    </span>
-                  )}
                 </button>
               </li>
             );

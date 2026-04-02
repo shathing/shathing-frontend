@@ -1,12 +1,9 @@
 export interface ChatRoom {
   id: number;
-  otherMemberId?: number;
-  otherMemberUsername?: string;
-  otherMember?: {
-    id?: number;
-    username?: string;
+  otherMember: {
+    id: number;
+    username: string;
   };
-  lastMessage?: string;
-  lastMessageCreatedDate?: string;
-  unreadCount?: number;
+  lastMessage: string | null;
+  lastMessageAt: string | null;
 }

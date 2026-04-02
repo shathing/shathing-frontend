@@ -18,17 +18,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import { ChatMessage as ChatMessageModel } from "@/types/models/chat-message";
 import { useQuery } from "@tanstack/react-query";
 import { Client, IMessage } from "@stomp/stompjs";
 import { ImageIcon, RotateCcw, SendHorizontalIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 
-type ChatMessage = {
-  id: string;
+type ChatMessageItem = {
+  id: number;
   mine: boolean;
-  senderUsername?: string;
   text: string;
   time: string;
   createdAt: number;
@@ -39,86 +39,25 @@ type ChatPanelProps = {
   className?: string;
 };
 
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
-
-const toStringValue = (value: unknown) => (typeof value === "string" ? value : undefined);
-
-const toNumericValue = (value: unknown) => {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string") {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
-  }
-  return undefined;
-};
-
-const toBooleanValue = (value: unknown) => (typeof value === "boolean" ? value : undefined);
-
 const resolveStompDestination = (template: string, chatRoomId: string) => template.replace("{chatRoomId}", chatRoomId);
 
 const formatMessageTime = (timestamp: number) =>
   new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-const parseMessageItems = (payload: unknown): unknown[] => {
-  if (Array.isArray(payload)) return payload;
-  if (!isRecord(payload)) return [];
-
-  const candidates = [payload.items, payload.content, payload.messages, payload.chatMessages, payload.data];
-  for (const candidate of candidates) {
-    if (Array.isArray(candidate)) return candidate;
-  }
-  return [];
-};
-
-const normalizeMessage = (payload: unknown, myUsername?: string, myMemberId?: number): ChatMessage | null => {
-  if (typeof payload === "string") {
-    const now = Date.now();
-    return {
-      id: `message-${now}-${Math.random()}`,
-      mine: false,
-      text: payload,
-      time: formatMessageTime(now),
-      createdAt: now,
-    };
-  }
-
-  if (!isRecord(payload)) return null;
-
-  const idRaw = payload.id ?? payload.messageId;
-  const id = toStringValue(idRaw) ?? (typeof idRaw === "number" ? String(idRaw) : undefined);
-  const text = toStringValue(payload.content) ?? toStringValue(payload.message) ?? "";
-  if (!text.trim()) return null;
-
-  const createdDate = toStringValue(payload.createdDate) ?? toStringValue(payload.createdAt);
-  const createdAt = createdDate ? new Date(createdDate).getTime() : Date.now();
-  const sender = isRecord(payload.sender) ? payload.sender : undefined;
-  const member = isRecord(payload.member) ? payload.member : undefined;
-  const senderUsername =
-    toStringValue(payload.senderUsername) ??
-    toStringValue(payload.username) ??
-    toStringValue(sender?.username) ??
-    toStringValue(member?.username);
-  const senderId = toNumericValue(payload.senderId) ?? toNumericValue(sender?.id) ?? toNumericValue(member?.id);
-  const mineFlag = toBooleanValue(payload.mine) ?? toBooleanValue(payload.isMine);
-  const mine =
-    typeof mineFlag === "boolean"
-      ? mineFlag
-      : typeof senderId === "number" && typeof myMemberId === "number"
-        ? senderId === myMemberId
-        : Boolean(senderUsername && myUsername && senderUsername === myUsername);
+const toChatMessageItem = (message: ChatMessageModel, myUsername?: string): ChatMessageItem => {
+  const createdAt = new Date(message.createdDate).getTime();
 
   return {
-    id: id ?? `message-${createdAt}-${Math.random()}`,
-    mine,
-    senderUsername,
-    text,
+    id: message.id,
+    mine: message.sender.username === myUsername,
+    text: message.content,
     time: formatMessageTime(createdAt),
     createdAt,
   };
 };
 
-const mergeMessages = (initialMessages: ChatMessage[], liveMessages: ChatMessage[]) => {
-  const merged = new Map<string, ChatMessage>();
+const mergeMessages = (initialMessages: ChatMessageItem[], liveMessages: ChatMessageItem[]) => {
+  const merged = new Map<number, ChatMessageItem>();
   for (const message of initialMessages) merged.set(message.id, message);
   for (const message of liveMessages) merged.set(message.id, message);
   return [...merged.values()].sort((a, b) => a.createdAt - b.createdAt);
@@ -131,44 +70,40 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
   const { data: me } = useGetMe({ enabled: !!chatRoomId });
   const [connectedRoomId, setConnectedRoomId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState("");
-  const [liveMessagesByRoom, setLiveMessagesByRoom] = useState<Record<string, ChatMessage[]>>({});
+  const [liveMessagesByRoom, setLiveMessagesByRoom] = useState<Record<string, ChatMessageItem[]>>({});
   const clientRef = useRef<Client | null>(null);
   const messageViewportRef = useRef<HTMLDivElement | null>(null);
-  const isComposingRef = useRef(false);
   const myUsernameRef = useRef<string | undefined>(me?.username);
-  const myMemberId = isRecord(me) && "id" in me ? toNumericValue((me as Record<string, unknown>).id) : undefined;
-  const myMemberIdRef = useRef<number | undefined>(myMemberId);
 
   useEffect(() => {
     myUsernameRef.current = me?.username;
   }, [me?.username]);
 
-  useEffect(() => {
-    myMemberIdRef.current = myMemberId;
-  }, [myMemberId]);
-
   const {
-    data: initialMessages = [],
+    data: initialMessageSlice,
     isPending: isPendingMessages,
     isError: isErrorMessages,
     refetch: refetchMessages,
   } = useQuery({
-    queryKey: ["chatApi.getMessages", roomId, me?.username ?? "", myMemberId ?? -1],
+    queryKey: ["chatApi.getMessages", roomId, me?.username ?? ""],
     enabled: hasValidRoomId,
     queryFn: async () => {
       const { data } = await chatApi.getMessages(roomId, { size: CHAT_MESSAGE_PAGE_SIZE });
-      return parseMessageItems(data)
-        .map((item) => normalizeMessage(item, me?.username, myMemberId))
-        .filter((item): item is ChatMessage => item !== null)
-        .sort((a, b) => a.createdAt - b.createdAt);
+      return {
+        ...data,
+        items: data.items.map((item) => toChatMessageItem(item, me?.username)),
+      };
     },
   });
+
+  const initialMessages = initialMessageSlice?.items ?? [];
 
   useEffect(() => {
     if (!hasValidRoomId || !chatRoomId) return;
 
     const roomKey = chatRoomId;
     const subscribeDestination = resolveStompDestination(CHAT_STOMP_SUBSCRIBE_DEST_TEMPLATE, chatRoomId);
+    setConnectedRoomId(null);
 
     const client = new Client({
       connectHeaders: CHAT_STOMP_CONNECT_HEADERS,
@@ -185,19 +120,16 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
       onConnect: () => {
         setConnectedRoomId(roomKey);
         client.subscribe(subscribeDestination, (stompMessage: IMessage) => {
-          let payload: unknown = stompMessage.body;
           try {
-            payload = JSON.parse(stompMessage.body);
-          } catch {
-            payload = stompMessage.body;
-          }
+            const payload = JSON.parse(stompMessage.body) as ChatMessageModel;
+            const nextMessage = toChatMessageItem(payload, myUsernameRef.current);
 
-          const nextMessage = normalizeMessage(payload, myUsernameRef.current, myMemberIdRef.current);
-          if (nextMessage) {
             setLiveMessagesByRoom((prev) => {
               const roomMessages = prev[roomKey] ?? [];
               return { ...prev, [roomKey]: [...roomMessages, nextMessage] };
             });
+          } catch {
+            return;
           }
         });
       },
@@ -215,10 +147,7 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
     };
   }, [chatRoomId, hasValidRoomId]);
 
-  const messages = useMemo(() => {
-    if (!chatRoomId) return initialMessages;
-    return mergeMessages(initialMessages, liveMessagesByRoom[chatRoomId] ?? []);
-  }, [chatRoomId, initialMessages, liveMessagesByRoom]);
+  const messages = chatRoomId ? mergeMessages(initialMessages, liveMessagesByRoom[chatRoomId] ?? []) : initialMessages;
 
   const isRoomConnected = Boolean(chatRoomId && connectedRoomId === chatRoomId);
 
@@ -229,7 +158,6 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (isComposingRef.current) return;
     if (!chatRoomId || !hasValidRoomId) return;
     const content = messageInput.trim();
     if (!content) return;
@@ -248,7 +176,7 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     const nativeEvent = event.nativeEvent;
-    if (isComposingRef.current || nativeEvent.isComposing || nativeEvent.keyCode === 229) return;
+    if (nativeEvent.isComposing || nativeEvent.keyCode === 229) return;
     if (event.key !== "Enter" || event.shiftKey) return;
     event.preventDefault();
     handleSendMessage();
@@ -332,12 +260,6 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
               value={messageInput}
               onChange={(event) => setMessageInput(event.target.value)}
               onKeyDown={handleInputKeyDown}
-              onCompositionStart={() => {
-                isComposingRef.current = true;
-              }}
-              onCompositionEnd={() => {
-                isComposingRef.current = false;
-              }}
             />
             <Button
               size="icon"

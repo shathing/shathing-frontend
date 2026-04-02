@@ -1,10 +1,10 @@
 export interface ChatMessage {
   id: number;
-  chatRoomId?: number;
-  senderId?: number;
-  senderUsername?: string;
+  roomId: number;
+  sender: {
+    id: number;
+    username: string;
+  };
   content: string;
-  createdDate?: string;
-  createdAt?: string;
-  mine?: boolean;
+  createdDate: string;
 }
