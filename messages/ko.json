@@ -47,6 +47,11 @@
     "create-post": "등록하기",
     "back-to-list": "목록",
     "contact-chat": "채팅으로 문의하기",
+    "edit-post": "수정",
+    "delete-post": "삭제",
+    "delete-confirm": "게시글을 삭제할까요?",
+    "delete-success": "게시글이 삭제되었습니다.",
+    "delete-error": "게시글 삭제에 실패했습니다.",
     "category": "카테고리",
     "region": "지역",
     "region-change-title": "지역 변경",
@@ -54,10 +59,14 @@
   },
   "SharePost": {
     "title": "공유하기",
+    "edit-title": "공유글 수정",
     "description": "빌려줄 물건을 등록해 주세요.",
+    "edit-description": "공유글 내용을 수정해 주세요.",
     "toast": {
       "success": "게시 완료",
-      "error": "게시 실패"
+      "error": "게시 실패",
+      "update-success": "게시글이 수정되었습니다.",
+      "update-error": "게시글 수정에 실패했습니다."
     },
     "validation": {
       "title-required": "제목을 입력해 주세요.",
@@ -94,7 +103,8 @@
     },
     "actions": {
       "cancel": "취소",
-      "submit": "등록"
+      "submit": "등록",
+      "update": "수정"
     }
   },
   "Me": {

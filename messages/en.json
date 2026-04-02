@@ -47,6 +47,11 @@
     "create-post": "Create post",
     "back-to-list": "Back to list",
     "contact-chat": "Contact via chat",
+    "edit-post": "Edit",
+    "delete-post": "Delete",
+    "delete-confirm": "Do you want to delete this post?",
+    "delete-success": "Post deleted.",
+    "delete-error": "Failed to delete post.",
     "category": "Category",
     "region": "Region",
     "region-change-title": "Change region",
@@ -54,10 +59,14 @@
   },
   "SharePost": {
     "title": "Create a share post",
+    "edit-title": "Edit share post",
     "description": "Register an item you can lend.",
+    "edit-description": "Update your share post details.",
     "toast": {
       "success": "Post created",
-      "error": "Failed to create post"
+      "error": "Failed to create post",
+      "update-success": "Post updated.",
+      "update-error": "Failed to update post."
     },
     "validation": {
       "title-required": "Please enter a title.",
@@ -94,7 +103,8 @@
     },
     "actions": {
       "cancel": "Cancel",
-      "submit": "Submit"
+      "submit": "Submit",
+      "update": "Update"
     }
   },
   "Me": {

@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useShareItemPostStore } from "@/stores/useShareItemPostStore";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { ImagePlus, MapPin, Tags } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -18,6 +20,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 
 const TITLE_MAX_LENGTH = 80;
 const CONTENT_MAX_LENGTH = 1200;
@@ -26,8 +29,14 @@ const PHOTO_MAX_COUNT = 10;
 export default function Page() {
   const t = useTranslations("SharePost");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editItemIdParam = searchParams.get("id");
+  const editItemId = editItemIdParam ? Number(editItemIdParam) : NaN;
+  const isEditMode = Number.isFinite(editItemId) && editItemId > 0;
   const selectedRegion = useShareItemPostStore((state) => state.selectedRegion);
   const selectedCategory = useShareItemPostStore((state) => state.selectedCategory);
+  const setSelectedRegion = useShareItemPostStore((state) => state.setSelectedRegion);
+  const setSelectedCategory = useShareItemPostStore((state) => state.setSelectedCategory);
 
   const postFormSchema = z.object({
     title: z
@@ -41,7 +50,7 @@ export default function Page() {
       .min(1, t("validation.content-required"))
       .max(CONTENT_MAX_LENGTH, t("validation.content-max", { max: CONTENT_MAX_LENGTH.toString() })),
     photoUrls: z
-      .array(z.custom<File>((value) => value instanceof File, t("validation.photo-invalid")))
+      .array(z.custom<File | string>((value) => value instanceof File || typeof value === "string", t("validation.photo-invalid")))
       .min(1, t("validation.photo-required"))
       .max(PHOTO_MAX_COUNT, t("validation.photo-max", { max: PHOTO_MAX_COUNT.toString() })),
     regionId: z.string().min(1, t("validation.location-required")),
@@ -60,6 +69,32 @@ export default function Page() {
     },
   });
 
+  const {
+    data: editingItem,
+    isPending: isPendingEditingItem,
+    isError: isErrorEditingItem,
+  } = useQuery({
+    queryKey: ["shareApi.getById", editItemId],
+    enabled: isEditMode,
+    queryFn: async () => {
+      const { data } = await shareApi.getById(editItemId);
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (!editingItem) return;
+    form.reset({
+      title: editingItem.title,
+      content: editingItem.content,
+      photoUrls: editingItem.photoUrls,
+      regionId: editingItem.region.id.toString(),
+      categoryId: editingItem.category.id.toString(),
+    });
+    setSelectedRegion(editingItem.region);
+    setSelectedCategory(editingItem.category);
+  }, [editingItem, form, setSelectedRegion, setSelectedCategory]);
+
   useEffect(() => {
     form.setValue("regionId", selectedRegion?.id.toString() ?? "", {
       shouldValidate: form.formState.submitCount > 0,
@@ -75,36 +110,67 @@ export default function Page() {
   const handleSubmit = async (values: PostFormValues) => {
     try {
       const photoUrls = await Promise.all(
-        values.photoUrls.map(async (file) => {
+        values.photoUrls.map(async (item) => {
+          if (typeof item === "string") return item;
           const { data } = await fileApi.getUploadPresignedUrl({
-            fileName: file.name,
-            contentType: file.type || "application/octet-stream",
+            fileName: item.name,
+            contentType: item.type || "application/octet-stream",
           });
-          await fileApi.uploadWithPresignedUrl(data.uploadUrl, file);
+          await fileApi.uploadWithPresignedUrl(data.uploadUrl, item);
           return data.key;
         }),
       );
 
-      await shareApi.post({
-        title: values.title,
-        content: values.content,
-        photoUrls,
-        regionId: Number(values.regionId),
-        categoryId: Number(values.categoryId),
-      });
-      toast.success(t("toast.success"));
-      router.push("/share");
+      if (isEditMode) {
+        await shareApi.update(editItemId, {
+          title: values.title,
+          content: values.content,
+          photoUrls,
+          regionId: Number(values.regionId),
+          categoryId: Number(values.categoryId),
+        });
+        toast.success(t("toast.update-success"));
+        router.push(`/share/${editItemId}`);
+      } else {
+        await shareApi.post({
+          title: values.title,
+          content: values.content,
+          photoUrls,
+          regionId: Number(values.regionId),
+          categoryId: Number(values.categoryId),
+        });
+        toast.success(t("toast.success"));
+        router.push("/share");
+      }
     } catch {
-      toast.error(t("toast.error"));
+      toast.error(t(isEditMode ? "toast.update-error" : "toast.error"));
     }
   };
+
+  if (isEditMode && isPendingEditingItem) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (isEditMode && isErrorEditingItem) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Button onClick={() => router.push("/share")} variant="outline">
+          {t("actions.cancel")}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-3xl py-6 md:py-8">
       <Card className="gap-0 overflow-hidden py-0">
         <CardHeader className="border-b bg-linear-to-r from-muted/60 to-background py-5">
-          <CardTitle className="text-lg">{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
+          <CardTitle className="text-lg">{t(isEditMode ? "edit-title" : "title")}</CardTitle>
+          <CardDescription>{t(isEditMode ? "edit-description" : "description")}</CardDescription>
         </CardHeader>
 
         <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -212,12 +278,16 @@ export default function Page() {
                 variant="destructive"
                 type="button"
                 onClick={() => {
-                  router.push("/share");
+                  if (isEditMode) {
+                    router.push(`/share/${editItemId}`);
+                  } else {
+                    router.push("/share");
+                  }
                 }}
               >
                 {t("actions.cancel")}
               </Button>
-              <Button type="submit">{t("actions.submit")}</Button>
+              <Button type="submit">{t(isEditMode ? "actions.update" : "actions.submit")}</Button>
             </div>
           </CardFooter>
         </form>

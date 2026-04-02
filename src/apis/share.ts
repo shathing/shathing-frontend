@@ -1,4 +1,4 @@
-import { SharePostRequest, GetShareItemsRequest } from "@/types/apis/share";
+import { SharePostRequest, GetShareItemsRequest, UpdateShareItemRequest } from "@/types/apis/share";
 import http from "./config";
 import { PageResponse } from "@/types/apis/common";
 import { ShareItem } from "@/types/models/share-item";
@@ -12,4 +12,10 @@ export const shareApi = {
 
   /** 공유글 상세페이지 정보 가져오기 */
   getById: (id: number) => http.get<ShareItem>(`/share/posts/${id}`),
+
+  /** 공유글 수정 */
+  update: (id: number, request: UpdateShareItemRequest) => http.put<ShareItem>(`/share/posts/${id}`, request),
+
+  /** 공유글 삭제 */
+  delete: (id: number) => http.delete<void>(`/share/posts/${id}`),
 }

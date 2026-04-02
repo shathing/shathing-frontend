@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ImageR2 from "@/components/ImageR2";
 import { notFound } from "next/navigation";
 import GoToBackBtn from "./GoToBackBtn";
-import StartChatButton from "./StartChatButton";
+import ShareActionButtons from "./ShareActionButtons";
 import {
   Carousel,
   CarouselContent,
@@ -72,7 +72,16 @@ export default async function Page({ params }: Props) {
                 <div className="text-xs text-muted-foreground">{locationLabel}</div>
               </div>
             </div>
-            <StartChatButton label={t("contact-chat")} otherMemberId={shareItem.member.id} />
+            <ShareActionButtons
+              shareItemId={shareItem.id}
+              ownerMemberId={shareItem.member.id}
+              chatLabel={t("contact-chat")}
+              editLabel={t("edit-post")}
+              deleteLabel={t("delete-post")}
+              deleteConfirmMessage={t("delete-confirm")}
+              deleteSuccessMessage={t("delete-success")}
+              deleteErrorMessage={t("delete-error")}
+            />
           </div>
         </section>
 

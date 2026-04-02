@@ -1,4 +1,5 @@
 import { Category } from "./category";
+import { Member } from "./member";
 import { Region } from "./region";
 
 export interface ShareItem {
@@ -8,9 +9,6 @@ export interface ShareItem {
   createdDate: string;
   photoUrls: string[];
   category: Category;
-  member: {
-    id: number;
-    username: string;
-  };
+  member: Omit<Member, "email">
   region: Region;
 }

@@ -43,7 +43,7 @@ httpClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (!originalRequest || !originalRequest._retry) {
+    if (!originalRequest) {
       return Promise.reject(error);
     }
 
