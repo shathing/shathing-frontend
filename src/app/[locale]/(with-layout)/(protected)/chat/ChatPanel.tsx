@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import useChatRoomMessages from "@/hooks/chat/useChatRoomMessages";
+import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { ImageIcon, RotateCcw, SendHorizontalIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -17,6 +18,7 @@ type ChatPanelProps = {
 
 export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
   const t = useTranslations("Chat");
+  const router = useRouter();
   const [messageInput, setMessageInput] = useState("");
   const {
     hasValidRoomId,
@@ -27,6 +29,7 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
     meUsername,
     messages,
     refetchMessages,
+    roomAccessError,
     sendMessage,
     setViewportRef,
     topSentinelRef,
@@ -58,6 +61,21 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
     return (
       <section className={cn("h-full min-h-0 flex flex-col border-l sm:border-l-0", className)}>
         <div className="flex h-full items-center justify-center text-sm text-muted-foreground">{t("invalid-room")}</div>
+      </section>
+    );
+  }
+
+  if (roomAccessError) {
+    return (
+      <section className={cn("h-full min-h-0 flex flex-col border-l sm:border-l-0", className)}>
+        <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            {roomAccessError === "forbidden" ? t("access-denied") : t("room-not-found")}
+          </p>
+          <Button variant="outline" onClick={() => router.replace("/chat")}>
+            {t("back-to-list")}
+          </Button>
+        </div>
       </section>
     );
   }
