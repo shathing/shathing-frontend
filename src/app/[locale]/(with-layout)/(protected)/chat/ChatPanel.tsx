@@ -43,7 +43,7 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
   };
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter" || event.shiftKey) return;
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
     event.preventDefault();
     handleSendMessage();
   };
