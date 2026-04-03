@@ -140,9 +140,6 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
 
         <footer className="shrink-0 border-t p-3">
           <div className="flex items-center gap-2">
-            <Button size="icon" variant="ghost" aria-label={t("attach-image")}>
-              <ImageIcon />
-            </Button>
             <Input
               placeholder={t("message-placeholder")}
               value={messageInput}
