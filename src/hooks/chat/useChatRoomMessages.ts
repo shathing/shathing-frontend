@@ -74,20 +74,15 @@ export default function useChatRoomMessages(chatRoomId?: string) {
     isError: isErrorMessages,
     refetch: refetchMessages,
   } = useInfiniteQuery({
-    queryKey: ["chatApi.getMessages", roomId, me?.id ?? -1],
+    queryKey: ["chatApi.getMessages", roomId],
     enabled: hasValidRoomId,
     initialPageParam: undefined as number | undefined,
-    queryFn: async ({ pageParam }) => {
-      const { data } = await chatApi.getMessages(roomId, { size: 30, beforeMessageId: pageParam });
-      return {
-        ...data,
-        items: data.items.map((item) => toChatMessageItem(item, me?.id)),
-      };
-    },
+    queryFn: async ({ pageParam }) => chatApi.getMessages(roomId, { size: 30, beforeMessageId: pageParam }).then(({ data }) => data),
     getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursorId ?? undefined : undefined),
   });
 
-  const pagedMessages = pagedMessageSlices?.pages.flatMap((page) => page.items) ?? [];
+  const pagedMessages =
+    pagedMessageSlices?.pages.flatMap((page) => page.items.map((item) => toChatMessageItem(item, me?.id))) ?? [];
   const messages = mergeMessages(pagedMessages, liveMessages);
 
   useEffect(() => {
