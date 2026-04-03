@@ -2,6 +2,7 @@
 
 import { chatApi } from "@/apis/chat";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -49,14 +50,10 @@ export default function ChatList({ className }: { className?: string }) {
         </div>
       ) : isError ? (
         <div className="flex flex-1 items-center justify-center">
-          <button
-            type="button"
-            className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm text-muted-foreground hover:bg-accent"
-            onClick={() => refetch()}
-          >
+          <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="size-4" />
             {t("retry")}
-          </button>
+          </Button>
         </div>
       ) : chatList.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-4 text-center text-sm text-muted-foreground">
@@ -83,7 +80,9 @@ export default function ChatList({ className }: { className?: string }) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <p className="truncate text-sm font-semibold">{thread.otherMember.username}</p>
-                      <span className="text-xs text-muted-foreground">{formatListTime(thread.lastMessageAt ?? undefined)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatListTime(thread.lastMessageAt ?? undefined)}
+                      </span>
                     </div>
                     <p className="truncate text-sm text-muted-foreground">{thread.lastMessage ?? ""}</p>
                   </div>
