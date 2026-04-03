@@ -44,6 +44,11 @@ export default function useChatRoomMessages(chatRoomId?: string) {
   const [connectedRoomId, setConnectedRoomId] = useState<string | null>(null);
   const [liveMessages, setLiveMessages] = useState<ChatMessageItem[]>([]);
   const clientRef = useRef<Client | null>(null);
+  const myIdRef = useRef<number | undefined>(me?.id);
+
+  useEffect(() => {
+    myIdRef.current = me?.id;
+  }, [me?.id]);
 
   const {
     data: initialMessageSlice,
@@ -51,7 +56,7 @@ export default function useChatRoomMessages(chatRoomId?: string) {
     isError: isErrorMessages,
     refetch: refetchMessages,
   } = useQuery({
-    queryKey: ["chatApi.getMessages", roomId, me?.username ?? ""],
+    queryKey: ["chatApi.getMessages", roomId, me?.id ?? -1],
     enabled: hasValidRoomId,
     queryFn: async () => {
       const { data } = await chatApi.getMessages(roomId, { size: 30 });
@@ -83,7 +88,7 @@ export default function useChatRoomMessages(chatRoomId?: string) {
         client.subscribe(`/topic/chat/rooms/${chatRoomId}`, (stompMessage: IMessage) => {
           try {
             const payload = JSON.parse(stompMessage.body) as ChatMessage;
-            setLiveMessages((prev) => [...prev, toChatMessageItem(payload, me?.id)]);
+            setLiveMessages((prev) => [...prev, toChatMessageItem(payload, myIdRef.current)]);
           } catch {
             return;
           }
