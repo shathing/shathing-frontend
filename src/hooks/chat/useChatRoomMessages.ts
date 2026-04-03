@@ -3,9 +3,10 @@
 import { chatApi } from "@/apis/chat";
 import useGetMe from "@/hooks/apis/useGetMe";
 import { ChatMessage } from "@/types/models/chat-message";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Client, IMessage } from "@stomp/stompjs";
-import { useEffect, useRef, useState } from "react";
+import { useInView } from "react-intersection-observer";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export type ChatMessageItem = {
   id: number;
@@ -43,31 +44,51 @@ export default function useChatRoomMessages(chatRoomId?: string) {
   const { data: me } = useGetMe({ enabled: !!chatRoomId });
   const [connectedRoomId, setConnectedRoomId] = useState<string | null>(null);
   const [liveMessages, setLiveMessages] = useState<ChatMessageItem[]>([]);
+  const [viewportElement, setViewportElement] = useState<HTMLDivElement | null>(null);
   const clientRef = useRef<Client | null>(null);
   const myIdRef = useRef<number | undefined>(me?.id);
+  const messageViewportRef = useRef<HTMLDivElement | null>(null);
+  const restoreScrollOffsetRef = useRef<number | null>(null);
+  const previousMessagesLengthRef = useRef(0);
+  const requestedWhileInViewRef = useRef(false);
+  const { ref: topSentinelRef, inView } = useInView({
+    root: viewportElement,
+    threshold: 0,
+  });
 
   useEffect(() => {
     myIdRef.current = me?.id;
   }, [me?.id]);
 
+  const setViewportRef = useCallback((node: HTMLDivElement | null) => {
+    messageViewportRef.current = node;
+    setViewportElement(node);
+  }, []);
+
   const {
-    data: initialMessageSlice,
+    data: pagedMessageSlices,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
     isPending: isPendingMessages,
     isError: isErrorMessages,
     refetch: refetchMessages,
-  } = useQuery({
+  } = useInfiniteQuery({
     queryKey: ["chatApi.getMessages", roomId, me?.id ?? -1],
     enabled: hasValidRoomId,
-    queryFn: async () => {
-      const { data } = await chatApi.getMessages(roomId, { size: 30 });
+    initialPageParam: undefined as number | undefined,
+    queryFn: async ({ pageParam }) => {
+      const { data } = await chatApi.getMessages(roomId, { size: 30, beforeMessageId: pageParam });
       return {
         ...data,
         items: data.items.map((item) => toChatMessageItem(item, me?.id)),
       };
     },
+    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursorId ?? undefined : undefined),
   });
 
-  const initialMessages = initialMessageSlice?.items ?? [];
+  const pagedMessages = pagedMessageSlices?.pages.flatMap((page) => page.items) ?? [];
+  const messages = mergeMessages(pagedMessages, liveMessages);
 
   useEffect(() => {
     if (!hasValidRoomId || !chatRoomId) return;
@@ -123,14 +144,59 @@ export default function useChatRoomMessages(chatRoomId?: string) {
     return true;
   };
 
+  useEffect(() => {
+    restoreScrollOffsetRef.current = null;
+    previousMessagesLengthRef.current = 0;
+    requestedWhileInViewRef.current = false;
+  }, [chatRoomId]);
+
+  useLayoutEffect(() => {
+    const viewport = messageViewportRef.current;
+    if (!viewport) return;
+
+    if (restoreScrollOffsetRef.current !== null) {
+      viewport.scrollTop = viewport.scrollHeight - restoreScrollOffsetRef.current;
+      restoreScrollOffsetRef.current = null;
+      previousMessagesLengthRef.current = messages.length;
+      return;
+    }
+
+    if (messages.length > previousMessagesLengthRef.current) {
+      viewport.scrollTop = viewport.scrollHeight;
+    }
+
+    previousMessagesLengthRef.current = messages.length;
+  }, [messages.length]);
+
+  useEffect(() => {
+    if (!inView) {
+      requestedWhileInViewRef.current = false;
+      return;
+    }
+
+    if (!hasNextPage || isFetchingNextPage || requestedWhileInViewRef.current) return;
+
+    const viewport = messageViewportRef.current;
+    if (!viewport) return;
+
+    requestedWhileInViewRef.current = true;
+    restoreScrollOffsetRef.current = viewport.scrollHeight - viewport.scrollTop;
+    void fetchNextPage();
+  }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
+
   return {
     hasValidRoomId,
+    hasNextPage,
     isRoomConnected: Boolean(chatRoomId && connectedRoomId === chatRoomId),
     isPendingMessages,
     isErrorMessages,
+    isFetchingNextPage,
     meUsername: me?.username,
-    messages: mergeMessages(initialMessages, liveMessages),
+    messages,
+    fetchNextPage,
     refetchMessages,
     sendMessage,
+    setViewportRef,
+    topSentinelRef,
   };
 }

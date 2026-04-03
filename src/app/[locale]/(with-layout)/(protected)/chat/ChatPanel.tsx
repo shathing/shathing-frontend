@@ -8,7 +8,7 @@ import useChatRoomMessages from "@/hooks/chat/useChatRoomMessages";
 import { cn } from "@/lib/utils";
 import { ImageIcon, RotateCcw, SendHorizontalIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useState } from "react";
 
 type ChatPanelProps = {
   chatRoomId?: string;
@@ -18,23 +18,19 @@ type ChatPanelProps = {
 export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
   const t = useTranslations("Chat");
   const [messageInput, setMessageInput] = useState("");
-  const messageViewportRef = useRef<HTMLDivElement | null>(null);
   const {
     hasValidRoomId,
     isRoomConnected,
     isPendingMessages,
     isErrorMessages,
+    isFetchingNextPage,
     meUsername,
     messages,
     refetchMessages,
     sendMessage,
+    setViewportRef,
+    topSentinelRef,
   } = useChatRoomMessages(chatRoomId);
-
-  useEffect(() => {
-    const viewport = messageViewportRef.current;
-    if (!viewport) return;
-    viewport.scrollTop = viewport.scrollHeight;
-  }, [messages]);
 
   const handleSendMessage = () => {
     const content = messageInput.trim();
@@ -79,7 +75,7 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div ref={messageViewportRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-muted/20 p-5">
+        <div ref={setViewportRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-muted/20 p-5">
           {isPendingMessages ? (
             <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
               <Spinner />
@@ -101,18 +97,26 @@ export default function ChatPanel({ chatRoomId, className }: ChatPanelProps) {
               {t("empty-messages")}
             </div>
           ) : (
-            messages.map((message) => (
-              <div key={message.id} className={`flex ${message.mine ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
-                    message.mine ? "bg-primary text-primary-foreground" : "bg-background border"
-                  }`}
-                >
-                  <p>{message.text}</p>
-                  <p className="mt-1 text-[10px] opacity-70">{message.time}</p>
+            <>
+              <div ref={topSentinelRef} className="h-px" />
+              {isFetchingNextPage && (
+                <div className="flex justify-center py-2">
+                  <Spinner />
                 </div>
-              </div>
-            ))
+              )}
+              {messages.map((message) => (
+                <div key={message.id} className={`flex ${message.mine ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
+                      message.mine ? "bg-primary text-primary-foreground" : "bg-background border"
+                    }`}
+                  >
+                    <p>{message.text}</p>
+                    <p className="mt-1 text-[10px] opacity-70">{message.time}</p>
+                  </div>
+                </div>
+              ))}
+            </>
           )}
         </div>
 
