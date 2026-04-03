@@ -31,7 +31,6 @@
 
 - `next-intl`
 - `@stomp/stompjs`
-- `sockjs-client`
 - `Sentry`
 
 ### Testing
@@ -164,7 +163,6 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 
 # Chat
 NEXT_PUBLIC_CHAT_WS_URL=ws://localhost:8080/ws-chat
-NEXT_PUBLIC_CHAT_SOCKJS_URL=
 NEXT_PUBLIC_CHAT_STOMP_SUBSCRIBE_DEST_TEMPLATE=/topic/chat/rooms/{chatRoomId}
 NEXT_PUBLIC_CHAT_STOMP_SEND_DEST_TEMPLATE=/pub/chat/rooms/{chatRoomId}/messages
 

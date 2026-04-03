@@ -1,23 +1,11 @@
 "use client";
 
 import { chatApi } from "@/apis/chat";
-import {
-  CHAT_MESSAGE_PAGE_SIZE,
-  CHAT_SOCKJS_URL,
-  CHAT_STOMP_CONNECT_HEADERS,
-  CHAT_STOMP_HEARTBEAT_INCOMING,
-  CHAT_STOMP_HEARTBEAT_OUTGOING,
-  CHAT_STOMP_RECONNECT_DELAY,
-  CHAT_STOMP_SEND_DEST_TEMPLATE,
-  CHAT_STOMP_SUBSCRIBE_DEST_TEMPLATE,
-  CHAT_WS_URL,
-} from "@/constants/chat";
 import useGetMe from "@/hooks/apis/useGetMe";
 import { ChatMessage } from "@/types/models/chat-message";
 import { useQuery } from "@tanstack/react-query";
 import { Client, IMessage } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
-import SockJS from "sockjs-client";
 
 export type ChatMessageItem = {
   id: number;
@@ -27,17 +15,15 @@ export type ChatMessageItem = {
   createdAt: number;
 };
 
-const resolveStompDestination = (template: string, chatRoomId: string) => template.replace("{chatRoomId}", chatRoomId);
-
 const formatMessageTime = (timestamp: number) =>
   new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-const toChatMessageItem = (message: ChatMessage, myUsername?: string): ChatMessageItem => {
+const toChatMessageItem = (message: ChatMessage, myId?: number): ChatMessageItem => {
   const createdAt = new Date(message.createdDate).getTime();
 
   return {
     id: message.id,
-    mine: message.sender.username === myUsername,
+    mine: message.sender.id === myId,
     text: message.content,
     time: formatMessageTime(createdAt),
     createdAt,
@@ -58,11 +44,6 @@ export default function useChatRoomMessages(chatRoomId?: string) {
   const [connectedRoomId, setConnectedRoomId] = useState<string | null>(null);
   const [liveMessages, setLiveMessages] = useState<ChatMessageItem[]>([]);
   const clientRef = useRef<Client | null>(null);
-  const myUsernameRef = useRef<string | undefined>(me?.username);
-
-  useEffect(() => {
-    myUsernameRef.current = me?.username;
-  }, [me?.username]);
 
   const {
     data: initialMessageSlice,
@@ -73,10 +54,10 @@ export default function useChatRoomMessages(chatRoomId?: string) {
     queryKey: ["chatApi.getMessages", roomId, me?.username ?? ""],
     enabled: hasValidRoomId,
     queryFn: async () => {
-      const { data } = await chatApi.getMessages(roomId, { size: CHAT_MESSAGE_PAGE_SIZE });
+      const { data } = await chatApi.getMessages(roomId, { size: 30 });
       return {
         ...data,
-        items: data.items.map((item) => toChatMessageItem(item, me?.username)),
+        items: data.items.map((item) => toChatMessageItem(item, me?.id)),
       };
     },
   });
@@ -85,29 +66,24 @@ export default function useChatRoomMessages(chatRoomId?: string) {
 
   useEffect(() => {
     if (!hasValidRoomId || !chatRoomId) return;
-
-    const subscribeDestination = resolveStompDestination(CHAT_STOMP_SUBSCRIBE_DEST_TEMPLATE, chatRoomId);
     setConnectedRoomId(null);
     setLiveMessages([]);
 
     const client = new Client({
-      connectHeaders: CHAT_STOMP_CONNECT_HEADERS,
-      reconnectDelay: CHAT_STOMP_RECONNECT_DELAY,
-      heartbeatIncoming: CHAT_STOMP_HEARTBEAT_INCOMING,
-      heartbeatOutgoing: CHAT_STOMP_HEARTBEAT_OUTGOING,
-      ...(CHAT_SOCKJS_URL
-        ? {
-            webSocketFactory: () => new SockJS(CHAT_SOCKJS_URL) as unknown as WebSocket,
-          }
-        : {
-            brokerURL: CHAT_WS_URL,
-          }),
+      connectHeaders: {
+        "accept-version": "1.2",
+        "heart-beat": "10000,10000",
+      },
+      reconnectDelay: 5000,
+      heartbeatIncoming: 10000,
+      heartbeatOutgoing: 10000,
+      brokerURL: process.env.NEXT_PUBLIC_CHAT_WS_URL,
       onConnect: () => {
         setConnectedRoomId(chatRoomId);
-        client.subscribe(subscribeDestination, (stompMessage: IMessage) => {
+        client.subscribe(`/topic/chat/rooms/${chatRoomId}`, (stompMessage: IMessage) => {
           try {
             const payload = JSON.parse(stompMessage.body) as ChatMessage;
-            setLiveMessages((prev) => [...prev, toChatMessageItem(payload, myUsernameRef.current)]);
+            setLiveMessages((prev) => [...prev, toChatMessageItem(payload, me?.id)]);
           } catch {
             return;
           }
@@ -133,9 +109,8 @@ export default function useChatRoomMessages(chatRoomId?: string) {
     const client = clientRef.current;
     if (!client || !client.connected) return false;
 
-    const sendDestination = resolveStompDestination(CHAT_STOMP_SEND_DEST_TEMPLATE, chatRoomId);
     client.publish({
-      destination: sendDestination,
+      destination: `/pub/chat/rooms/${chatRoomId}/messages`,
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ content }),
     });
