@@ -9,11 +9,9 @@ export default function Layout({ children }: { children: ReactNode }) {
   const isRoomPage = selectedSegment !== null;
 
   return (
-    <div className="h-[calc(100dvh-48px-48px)] overflow-hidden">
-      <div className="grid h-full sm:grid-cols-[300px_1fr]">
-        <ChatList className={isRoomPage ? "hidden sm:flex" : undefined} />
-        {children}
-      </div>
+    <div className="grid h-full sm:grid-cols-[300px_1fr]">
+      <ChatList className={isRoomPage ? "hidden sm:flex" : undefined} />
+      {children}
     </div>
   );
 }

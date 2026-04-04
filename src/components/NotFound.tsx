@@ -11,7 +11,7 @@ export default function NotFound() {
     <DefaultLayout>
       {/* not-found.tsx 파일 내에서는 metadata 로 title 이 설정되지 않아서 title 컴포넌트(React19) 사용 */}
       <title>{`${t("title")} - ${commonT("service-name")}`}</title>
-      <div className="h-[calc(100dvh-64px)] flex flex-col items-center justify-center gap-10">
+      <div className="h-full flex flex-col items-center justify-center gap-10">
         <h1 className="text-4xl font-bold whitespace-pre-line text-center">{t("description")}</h1>
         <Button asChild>
           <Link href="/">{t("go-to-home")}</Link>
