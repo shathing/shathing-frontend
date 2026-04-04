@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
-import { Button } from "@/components/ui/button";
+import NavBtn from "@/components/NavBtn";
 import { getTranslations } from "next-intl/server";
 import LoginButton from "@/components/LoginButton";
 import { cookies } from "next/headers";
@@ -24,9 +24,7 @@ export default async function Header() {
               { href: "/chat", title: t("chat") },
             ].map(({ href, title }, idx) => (
               <li key={idx}>
-                <Button asChild variant="ghost">
-                  <Link href={href}>{title}</Link>
-                </Button>
+                <NavBtn href={href} title={title} />
               </li>
             ))}
           </ul>
