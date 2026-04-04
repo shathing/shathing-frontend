@@ -6,12 +6,11 @@ import { AuthForm } from "./AuthForm";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { Separator } from "@/components/ui/separator";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { Metadata } from "next";
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Auth");
-  return {
-    title: t("title"),
-  };
+  return { title: t("title") };
 }
 
 export default async function Page() {

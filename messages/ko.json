@@ -1,6 +1,8 @@
 {
   "Common": {
-    "service-name": "샤딩"
+    "service-name": "샤딩",
+    "service-description": "필요한 물건을 빌려 쓰고 지금 쓰지 않는 물건을 이웃과 나누는 지역 기반 공유 서비스입니다.",
+    "service-keywords": "물건 공유,지역 기반 서비스,동네 커뮤니티,대여,빌려쓰기,순환 소비,지속 가능성"
   },
   "Header": {
     "login": "로그인",

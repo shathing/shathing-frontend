@@ -1,6 +1,8 @@
 {
   "Common": {
-    "service-name": "shathing"
+    "service-name": "shathing",
+    "service-description": "A neighborhood sharing service for borrowing what you need and lending what you do not use right now.",
+    "service-keywords": "sharing,neighborhood sharing,local community,lending,borrowing,secondhand,sustainability"
   },
   "Header": {
     "login": "login",

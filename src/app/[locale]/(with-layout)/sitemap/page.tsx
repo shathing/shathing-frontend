@@ -1,20 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { Locale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
 
-type Props = {
-  params: Promise<{ locale: Locale }>;
-};
-
-export async function generateMetadata(props: Props) {
-  const { locale } = await props.params;
-  const t = await getTranslations({ locale, namespace: "Sitemap" });
-  const commonT = await getTranslations({ locale, namespace: "Common" });
-
-  return {
-    title: t("title") + " - " + commonT("service-name"),
-  };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Sitemap");
+  return { title: t("title") };
 }
 
 export default function Sitemap() {

@@ -9,6 +9,12 @@ import { Link } from "@/i18n/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { regionApi } from "@/apis/region";
 import { categoryApi } from "@/apis/category";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Share");
+  return { title: t("title") };
+}
 
 export default async function Page({
   searchParams,
@@ -56,7 +62,12 @@ export default async function Page({
 
   return (
     <div className="space-y-2.5 my-2.5 relative">
-      <SearchBar key={`${categoryId ?? ""}:${regionId ?? ""}:${search ?? ""}`} region={region} category={category} search={search} />
+      <SearchBar
+        key={`${categoryId ?? ""}:${regionId ?? ""}:${search ?? ""}`}
+        region={region}
+        category={category}
+        search={search}
+      />
       {shareItems ? (
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {shareItems?.items.map((item) => (
