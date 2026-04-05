@@ -51,6 +51,7 @@ export default async function Page({
       }
     }
     const { data } = await shareApi.getList({
+      countryCode: locale == "ko" ? "KR" : "US",
       categoryId: category ? categoryId : undefined,
       regionId: region ? regionId : undefined,
       search,

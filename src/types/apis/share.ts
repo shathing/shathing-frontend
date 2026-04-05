@@ -1,3 +1,5 @@
+import { CountryCode } from "./common";
+
 export interface SharePostRequest {
   title: string,
   content: string,
@@ -15,6 +17,7 @@ export interface UpdateShareItemRequest {
 }
 
 export interface GetShareItemsRequest {
+  countryCode: CountryCode
   categoryId?: string,
   regionId?: string,
   search?: string,

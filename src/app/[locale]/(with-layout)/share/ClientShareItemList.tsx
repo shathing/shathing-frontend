@@ -6,7 +6,7 @@ import ShareItem from "./ShareItem";
 import { Button } from "@/components/ui/button";
 import { useAgo } from "@/hooks/useAgo";
 import { Spinner } from "@/components/ui/spinner";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const PAGE_SIZE = 20;
 
@@ -19,12 +19,20 @@ export default function ClientShareItemList({
   regionId?: string;
   search?: string;
 }) {
+  const locale = useLocale();
   const t = useTranslations("Share");
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ["shareApi.getList", categoryId, regionId, search],
     queryFn: ({ pageParam }) =>
       shareApi
-        .getList({ page: pageParam, size: PAGE_SIZE, categoryId, regionId, search })
+        .getList({
+          page: pageParam,
+          size: PAGE_SIZE,
+          categoryId,
+          regionId,
+          search,
+          countryCode: locale == "ko" ? "KR" : "US",
+        })
         .then((response) => response.data),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.page + 1 : undefined),
