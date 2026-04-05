@@ -24,7 +24,11 @@
   },
   "Sitemap": {
     "title": "Site Map",
-    "home": "Home"
+    "home": "Home",
+    "share": "Share",
+    "me": "My profile",
+    "chat": "Messages",
+    "post": "Create a share post"
   },
   "Auth": {
     "title": "Login or Sign up",

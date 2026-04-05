@@ -5,7 +5,12 @@ import { routing } from '@/i18n/routing';
 import { getPathname } from '@/i18n/navigation';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [getEntries('/')];
+  return [
+    '/',
+    '/auth',
+    '/sitemap',
+    '/share'
+  ].map((path) => getEntries(path))
 }
 
 type Href = Parameters<typeof getPathname>[0]['href'];

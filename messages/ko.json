@@ -24,7 +24,11 @@
   },
   "Sitemap": {
     "title": "사이트 맵",
-    "home": "홈"
+    "home": "홈",
+    "share": "공유",
+    "me": "내정보",
+    "chat": "채팅",
+    "post": "공유하기"
   },
   "Auth": {
     "title": "로그인 및 회원가입",
@@ -115,8 +119,8 @@
     "email": "이메일"
   },
   "Chat": {
-    "title": "메시지",
-    "new-chat": "새 메시지",
+    "title": "채팅",
+    "new-chat": "새 채팅",
     "search-placeholder": "채팅 검색",
     "active-now": "활동 중",
     "connecting": "연결 중...",
