@@ -15,10 +15,35 @@ import {
 } from "@/components/ui/carousel";
 import { getAgo } from "@/lib/getAgo";
 import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const t = await getTranslations("Share");
+  const { id } = await params;
+  try {
+    const { data } = await shareApi.getById(Number(id));
+    return {
+      title: data.title,
+      description: data.content,
+      openGraph: {
+        title: data.title,
+        description: data.content,
+        images: [
+          {
+            url: process.env.NEXT_PUBLIC_R2_BASE_URL + data.photoUrls[0],
+            alt: data.title,
+          },
+        ],
+      },
+    };
+  } catch {
+    return { title: t("title") };
+  }
+}
 
 export default async function Page({ params }: Props) {
   const t = await getTranslations("Share");

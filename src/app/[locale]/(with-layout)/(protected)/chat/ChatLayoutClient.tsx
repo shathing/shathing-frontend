@@ -1,0 +1,17 @@
+"use client";
+
+import { ReactNode } from "react";
+import { useSelectedLayoutSegment } from "next/navigation";
+import ChatList from "./ChatList";
+
+export default function ChatLayoutClient({ children }: { children: ReactNode }) {
+  const selectedSegment = useSelectedLayoutSegment();
+  const isRoomPage = selectedSegment !== null;
+
+  return (
+    <div className="grid h-full sm:grid-cols-[300px_1fr]">
+      <ChatList className={isRoomPage ? "hidden sm:flex" : undefined} />
+      {children}
+    </div>
+  );
+}
