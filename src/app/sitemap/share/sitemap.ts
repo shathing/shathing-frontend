@@ -9,7 +9,7 @@ export async function generateSitemaps() {
 
 export default async function sitemap(props: {
   id: Promise<string>
-}): Promise<MetadataRoute.Sitemap | undefined> {
+}): Promise<MetadataRoute.Sitemap> {
   const id = await props.id
   const countryCode = id === "ko" ? "KR" : "US"
   try {
@@ -17,5 +17,7 @@ export default async function sitemap(props: {
     return data.items.map(({ id: itemId }) => ({
       url: `${host}/${id}/share/${itemId}`,
     }))
-  } catch { }
+  } catch {
+    return []
+  }
 }
