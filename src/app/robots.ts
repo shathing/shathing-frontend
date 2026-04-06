@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
     },
     sitemap: [
       `${host}/sitemap.xml`,
-      ...(routing.locales.map((lnag) => `${host}/sitemap/share/sitemap/${lnag}.xml`
+      ...(routing.locales.map((lnag) => `${host}/share/sitemap/${lnag}.xml`
       ))
     ]
   }
